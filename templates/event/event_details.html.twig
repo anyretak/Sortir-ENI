@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block content %}
+
+    <div>
+        <p> Event Name : </p> <span>{{ (eventDetails.name) }}</span>
+        <p> Event Date : </p> <span>{{ (eventDetails.date | date('d-m-Y')) }}</span>
+        <p> Subscription due date : </p> <span> {{ (eventDetails.limitDate | date('d-m-Y')) }}</span>
+        <p> Number of places : </p> <span> {{ (eventDetails.spots) }}</span>
+        <p> Duration : </p> <span>{{ (eventDetails.duration) }}</span>
+        <p> Description: </p> <span> {{ (eventDetails.description) }}</span>
+    </div>
+    <div>
+        <p> Campus: </p> <span>{{ (eventDetails.campus) }}</span>
+        <p> Location : </p> <span>{{ (eventDetails.location) }}</span>
+        <p> Street : </p> <span> {{ (locationDetails.street) }}</span>
+        <p> Postal Code : </p> <span> {{ locationDetails.city }}</span>
+        <p> Latitude : </p> <span> {{ locationDetails.latitude }}</span>
+        <p> Longitude : </p> <span> {{ locationDetails.longitude }}</span>
+    </div>
+
+    <div>
+        <p>USERS REGISTERED</p>
+        {% for item in userDetails %}
+            <p>{{ item.username }} - {{ item.name }} {{ item.lastName }}</p>
+        {% endfor %}
+    </div>
+
+    <a href="{{ path('home') }}"><button>Back</button></a>
+
+{% endblock %}

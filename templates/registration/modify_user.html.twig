@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modify Profile{% endblock %}
+
+{% block content %}
+    {% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+
+    <h1>Modify Profile</h1>
+
+    {{ form_start(registrationForm) }}
+    {{ form_label(registrationForm.username) }} {{ form_widget(registrationForm.username) }}
+    {{ form_label(registrationForm.name) }}  {{ form_widget(registrationForm.name) }}
+    {{ form_label(registrationForm.lastName) }}  {{ form_widget(registrationForm.lastName) }}
+    {{ form_label(registrationForm.phone) }}  {{ form_widget(registrationForm.phone) }}
+    {{ form_label(registrationForm.email) }}  {{ form_widget(registrationForm.email) }}
+    {{ form_label(registrationForm.password.first) }} {{ form_widget(registrationForm.password.first) }}
+    {{ form_label(registrationForm.password.second) }} {{ form_widget(registrationForm.password.second) }}
+    {{ form_label(registrationForm.campus) }} {{ form_widget(registrationForm.campus) }}
+    <button type="submit" class="btn">Modify</button>
+    <a href="{{ path ('home') }}"><button type="button">Cancel</button></a>
+    {{ form_end(registrationForm) }}
+
+{% endblock %}

@@ -1,0 +1,10 @@
+<div class="navbar">
+    <img id="logo" src="{{ asset('images/logo.png') }}"  alt="Sortir ENI logo"/>
+    {% if app.user %}
+    <div class="navMenu">
+        <a class="nav" href="{{ path('home') }}">Home</a>
+        <a class="nav" href="{{ path('modify_user') }}">Modify Profile</a>
+        <a class="nav" href="{{ path('app_logout') }}">Logout</a>
+    </div>
+    {% endif %}
+</div>

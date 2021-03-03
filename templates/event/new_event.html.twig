@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Event{% endblock %}
+
+{% block content %}
+    <div class="app-event">
+        {{ form_start(form, { 'attr' : { 'class': 'app-event' } }) }}
+        <div class='app-event-s1'>
+            {{ form_label(form.name) }} {{ form_widget(form.name) }}
+            {{ form_label(form.date) }} {{ form_widget(form.date) }}
+            {{ form_label(form.limitDate) }} {{ form_widget(form.limitDate) }}
+            {{ form_label(form.spots) }} {{ form_widget(form.spots) }}
+            {{ form_label(form.duration) }} {{ form_widget(form.duration) }}
+            {{ form_label(form.description) }} {{ form_widget(form.description) }}
+        </div>
+        <div class='app-event-s2'>
+            {{ form_label(form.campus) }} {{ form_widget(form.campus) }}
+            {{ form_label(form.location_details.city) }} {{ form_widget(form.location_details.city) }}
+            {{ form_label(form.location) }} {{ form_widget(form.location) }}
+            {{ form_label(form.location_details.street) }} {{ form_widget(form.location_details.street) }}
+            {{ form_label(form.city_details.code) }} {{ form_widget(form.city_details.code) }}
+            {{ form_label(form.location_details.latitude) }} {{ form_widget(form.location_details.latitude) }}
+            {{ form_label(form.location_details.longitude) }} {{ form_widget(form.location_details.longitude) }}
+        </div>
+        <div class='app-event-s3'>
+            <button class="app-event-bt" type="submit">Register</button>
+            <a href="{{ path ('home') }}">
+                <button class="app-event-bt" type="button">Publish</button>
+            </a>
+            <a href="{{ path ('home') }}">
+                <button class="app-event-bt" type="button">Cancel</button>
+            </a>
+        </div>
+        {{ form_widget(form.user) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

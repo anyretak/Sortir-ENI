@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modify Profile{% endblock %}
+
+{% block content %}
+
+    {% for user in userDetails %}
+    <h3>{{ user.username }}</h3>
+
+        <p>Name : {{ user.name }}</p>
+        <p>Last Name : {{ user.lastName }}</p>
+        <p>Phone : {{ user.phone }}</p>
+        <p>Email : {{ user.email }}</p>
+        <p>Campus : {{ user.campus }}</p>
+    {% endfor %}
+  <a href="{{ path('home') }}"><button>Back</button></a>
+{% endblock %}

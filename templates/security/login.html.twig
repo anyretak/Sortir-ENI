@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortir ENI - Login{% endblock %}
+
+{% block content %}
+<div class="app-login">
+    <form class="app-login" method="post">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+
+        <label class="app-login" for="inputUsername">Username</label>
+        <input class="app-login" type="text" value="{{ last_username }}" name="username" id="inputUsername" required
+               autofocus>
+
+
+        <label class="app-login" for="inputPassword">Password</label>
+        <input class="app-login" type="password" name="password" id="inputPassword" required>
+
+
+        <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}">
+
+        <div>
+            <button class="app-login" type="submit">Sign in</button>
+        </div>
+
+        <div>
+            <div>
+                <label id="app-login-checkbox">
+                    <input type="checkbox" id="_remember_me" name="_remember_me"> Remember me
+                </label>
+            </div>
+            <div>
+                <a id="app-login-forgot" href="">Forgot Password</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

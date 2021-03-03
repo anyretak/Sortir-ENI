@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    {% for message in app.flashes('notice') %}
+        <div class="flash-notice">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Event Date&Time</th>
+                <th>Closing Date</th>
+                <th>Registrations</th>
+                <th>Status</th>
+                <th>Subscription Status</th>
+                <th>Organizer</th>
+                <th>Actions</th>
+            </tr>
+            {% for item in eventList %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.date | date('d-m-Y') }}</td>
+                <td>{{ item.limitDate | date('d-m-Y') }}</td>
+                <td>{{ item.subscriptions|length }}/{{ item.spots }}</td>
+                <td></td>
+                <td></td>
+                <td><a href="{{ path('user_profile', {'user': item.user}) }}">{{ item.user }}</a></td>
+                <td><a href="{{ path('subscribe', {'event': item.name, 'user': app.user}) }}">Subscribe</a>
+                    <a href="{{ path('remove', {'event': item.name, 'user': app.user}) }}">Remove</a>
+                    <a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
+                    <a href="{{ path('edit_event', {'event': item.name}) }}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div>
+    <a href="{{ path('event') }}"><button>Create Event</button></a>
+    </div>
+{% endblock %}
