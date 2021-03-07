@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -42,6 +43,14 @@ class RegistrationFormType extends AbstractType
                 'invalid_message' => 'The password fields must match.',
             ])
             ->add('campus')
+            ->add('imageFile', VichImageType::class, [
+                'required' => false,
+                'allow_delete' => false,
+                'delete_label' => '',
+                'download_uri' => '',
+                'download_label' => '',
+                'asset_helper' => false,
+            ])
         ;
     }
 

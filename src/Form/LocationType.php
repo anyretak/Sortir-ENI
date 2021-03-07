@@ -16,6 +16,11 @@ class LocationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('name',  TextType::class, [
+                'label' => 'Location name:',
+                'label_attr'=> ['class' => 'app-event'],
+                'attr' => ['class' => 'app-event']
+            ])
             ->add('city',  EntityType::class, [
                 'class' => City::class,
                 'required' => false,

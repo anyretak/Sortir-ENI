@@ -1,6 +1,49 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
+    <div class="app-welcome-info">
+        <div>
+            <p> User: {{ app.user.name }} {{ app.user.lastName }}</p>
+            <p>Current date: {{ "now"|date("m/d/Y") }} </p>
+        </div>
+    </div>
+    <h3>Filter your search :</h3>
+    <div class="app-search">
+        <div class="app-search-1">
+            <div>
+                Choose your campus:
+                <select onchange="filterCampus(this.value)">
+                    <option value=""></option>
+                    {% for campus in campusList %}
+                        <option value="{{ campus.name }}">{{ campus.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                Search by event name:
+                <input type="text" id="app-input" onkeyup="nameSearchFunction()" placeholder="Search by event name...">
+            </div>
+            <div>
+                Search by dates:
+                <input id="searchFrom" class="searchInput" type="date" placeholder="From"/>
+                <input id="searchTo" class="searchInput" type="date" placeholder="To">
+            </div>
+        </div>
+        <div class="app-search-2">
+            <input id="_type_1" name="_type_1" type="checkbox">
+            <label for="_type_1">My events</label> <br>
+            <input id="_type_2" name="_type_2" type="checkbox">
+            <label for="_type_2">Events I am currently subscribed to</label> <br>
+            <input id="_type_3" name="_type_3" type="checkbox">
+            <label for="_type_3">Events I am not subscribed to</label> <br>
+            <input id="_type_4" name="_type_4" type="checkbox">
+            <label for="_type_4">Past events</label>
+        </div>
+        <div class="app-search-3">
+            <button id="app-search-bt">SEARCH BUTTON</button>
+        </div>
+    </div>
+
 
     {% for message in app.flashes('notice') %}
         <div class="flash-notice">
@@ -9,7 +52,7 @@
     {% endfor %}
 
     <div>
-        <table>
+        <table id="app-main-table" class="app-main">
             <tr>
                 <th>Event</th>
                 <th>Event Date&Time</th>
@@ -21,25 +64,48 @@
                 <th>Actions</th>
             </tr>
             {% for item in eventList %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.date | date('d-m-Y') }}</td>
-                <td>{{ item.limitDate | date('d-m-Y') }}</td>
-                <td>{{ item.subscriptions|length }}/{{ item.spots }}</td>
-                <td></td>
-                <td></td>
-                <td><a href="{{ path('user_profile', {'user': item.user}) }}">{{ item.user }}</a></td>
-                <td><a href="{{ path('subscribe', {'event': item.name, 'user': app.user}) }}">Subscribe</a>
-                    <a href="{{ path('remove', {'event': item.name, 'user': app.user}) }}">Remove</a>
-                    <a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
-                    <a href="{{ path('edit_event', {'event': item.name}) }}">Edit</a>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ item.name }} {{ item.campus }}</td>
+                    <td>{{ item.date | date('d-m-Y H:i:s') }}</td>
+                    <td>{{ item.limitDate | date('d-m-Y') }}</td>
+                    <td>{{ item.subscriptions|length }}/{{ item.spots }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{% if app.user.name in item.subscriptions.values %}
+                            X
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ path('user_profile', {'user': item.user}) }}">{{ item.user }}</a></td>
+                    <td><a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
+                        {% if item.user != app.user and item.status == 'Open' %}
+                            {% if app.user.name in item.subscriptions.values %}
+                                <a href="{{ path('remove', {'event': item.name, 'user': app.user}) }}">Unsubscribe</a>
+                            {% else %}
+                                <a href="{{ path('subscribe', {'event': item.name, 'user': app.user}) }}">Subscribe</a>
+                            {% endif %}
+                        {% endif %}
+                        {% if item.user == app.user %}
+                            <a href="{{ path('edit_event', {'event': item.name}) }}">Edit</a>
+                        {% endif %}
+                    </td>
+                </tr>
             {% endfor %}
         </table>
     </div>
 
     <div>
-    <a href="{{ path('event') }}"><button>Create Event</button></a>
+        <a href="{{ path('event') }}">
+            <button>Create Event</button>
+        </a>
     </div>
+
+
+    {% block javascripts %}
+        {{ parent() }}
+        {{ encore_entry_script_tags('main_search') }}
+        {# <script src="{{ asset('build/runtime.js') }}"></script> #}
+    {% endblock %}
+
 {% endblock %}
+
+
+

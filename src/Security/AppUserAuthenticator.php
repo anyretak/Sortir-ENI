@@ -71,7 +71,7 @@ class AppUserAuthenticator extends AbstractFormLoginAuthenticator implements Pas
 
         if (!$user) {
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Username could not be found.');
+            throw new CustomUserMessageAuthenticationException('Invalid Credentials.');
         }
 
         return $user;
@@ -95,6 +95,8 @@ class AppUserAuthenticator extends AbstractFormLoginAuthenticator implements Pas
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
+
+        /*$user = $token-> getUser(); ADD TO REDIRECT TO DIFFERENT PAGES */
 
         return new RedirectResponse($this->urlGenerator->generate('home'));
     }

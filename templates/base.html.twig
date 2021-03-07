@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="eng">
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Sortir ENI{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
-        {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
-            <link rel="stylesheet" href="{{ asset('css/style.css') }}"/>
-        {% endblock %}
-        {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
-        {% endblock %}
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        {% block body %}
-            <header>
-                {% block header %}
-                    {{ include('templates/_header.html.twig') }}
-                {% endblock %}
-            </header>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sortir ENI{% endblock %}</title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 
-            <div class="content">
-                {% block content %}
-                {% endblock %}
-            </div>
-
-            <footer>
-                {% block footer %}
-                {% endblock %}
-            </footer>
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap" rel="stylesheet">
+</head>
+<body>
+{% block body %}
+    <header>
+        {% block header %}
+            {{ include('templates/_header.html.twig') }}
         {% endblock %}
-    </body>
+    </header>
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        {% block footer %}
+        {% endblock %}
+    </footer>
+{% endblock %}
+</body>
 </html>

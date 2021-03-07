@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Location{% endblock %}
+
+{% block content %}
+
+    <div class="app-location">
+        {{ form_start(form, { 'attr' : { 'class': 'app-location' } }) }}
+        {{ form_label(form.name) }} {{ form_widget(form.name) }}
+        {{ form_label(form.city) }} {{ form_widget(form.city) }}
+        {{ form_label(form.street) }} {{ form_widget(form.street) }}
+        {{ form_label(form.latitude) }} {{ form_widget(form.latitude) }}
+        {{ form_label(form.longitude) }} {{ form_widget(form.longitude) }}
+        <button class="app-event-bt" type="submit">Register</button>
+        <a href="{{ path ('event') }}">
+            <button class="app-event-bt" type="button">Back</button>
+        </a>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

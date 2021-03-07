@@ -5,31 +5,21 @@ namespace App\Form;
 use App\Entity\Campus;
 use App\Entity\Event;
 use App\Entity\Location;
-use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Security\Core\Security;
 
 class NewEventType extends AbstractType
 {
-    private $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $user = $this->security->getUser();
-
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Event name:',
@@ -77,15 +67,12 @@ class NewEventType extends AbstractType
                 'label_attr' => ['class' => 'app-event'],
                 'attr' => ['class' => 'app-event']
             ])
-
-            ->add('user', EntityType::class, [
-                'class' => User::class,
-                'data' => $user,
-                'attr' => ['style' => 'display:none']
-            ]);
+            ->add('create', SubmitType::class)
+            ->add('publish', SubmitType::class);
 
         $builder->add('city_details', CityType::class, ['mapped' => false, 'label' => false]);
         $builder->add('location_details', LocationType::class, ['mapped' => false, 'label' => false]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

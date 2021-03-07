@@ -12,43 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, AppUserAuthenticator $authenticator): Response
-    {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // do anything else you need here, like send an email
-
-            return $guardHandler->authenticateUserAndHandleSuccess(
-                $user,
-                $request,
-                $authenticator,
-                'main' // firewall name in security.yaml
-            );
-        }
-
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    }
-
     #[Route('/modify', name: 'modify_user')]
     public function modify(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, AppUserAuthenticator $authenticator): Response
     {
@@ -70,26 +37,26 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
             // do anything else you need here, like send an email
 
-            return $guardHandler->authenticateUserAndHandleSuccess(
-                $user,
-                $request,
-                $authenticator,
-                'main' // firewall name in security.yaml
+            $this->addFlash(
+                'notice',
+                'Success! Your profile was updated.'
             );
         }
 
         return $this->render('registration/modify_user.html.twig', [
             'registrationForm' => $form->createView(),
+            'user' => $user,
         ]);
     }
 
     #[Route('/profile/{user}', name: 'user_profile')]
-    public function userProfile($user, UserRepository $userRepository): Response
+    public function userProfile($user, UserRepository $userRepository, UploaderHelper $helper): Response
     {
-        $userDetails = $userRepository -> findBy(['name' => $user]);
+        $userDetails = $userRepository->findBy(['name' => $user]);
 
         return $this->render('registration/user_profile.html.twig', [
             'userDetails' => $userDetails,
+
         ]);
     }
 }

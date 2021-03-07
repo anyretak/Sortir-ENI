@@ -3,31 +3,66 @@
 {% block title %}Event Details{% endblock %}
 
 {% block content %}
-
-    <div>
-        <p> Event Name : </p> <span>{{ (eventDetails.name) }}</span>
-        <p> Event Date : </p> <span>{{ (eventDetails.date | date('d-m-Y')) }}</span>
-        <p> Subscription due date : </p> <span> {{ (eventDetails.limitDate | date('d-m-Y')) }}</span>
-        <p> Number of places : </p> <span> {{ (eventDetails.spots) }}</span>
-        <p> Duration : </p> <span>{{ (eventDetails.duration) }}</span>
-        <p> Description: </p> <span> {{ (eventDetails.description) }}</span>
+    <div class="app-user-profile">
+    <h3>Event Details</h3>
     </div>
-    <div>
-        <p> Campus: </p> <span>{{ (eventDetails.campus) }}</span>
-        <p> Location : </p> <span>{{ (eventDetails.location) }}</span>
-        <p> Street : </p> <span> {{ (locationDetails.street) }}</span>
-        <p> Postal Code : </p> <span> {{ locationDetails.city }}</span>
-        <p> Latitude : </p> <span> {{ locationDetails.latitude }}</span>
-        <p> Longitude : </p> <span> {{ locationDetails.longitude }}</span>
+    <div class="wrapper">
+    <table class="app-event-details">
+        <tr>
+            <td>Event Name :</td>
+            <td>{{ (eventDetails.name) }}</td>
+            <td> Campus:</td>
+            <td>{{ (eventDetails.campus) }}</td>
+        </tr>
+        <tr>
+            <td>Event Date :</td>
+            <td>{{ (eventDetails.date | date('d-m-Y H:i:s')) }}</td>
+            <td> Location :</td>
+            <td>{{ (eventDetails.location) }}</td>
+        </tr>
+        <tr>
+            <td> Subscription due date :</td>
+            <td> {{ (eventDetails.limitDate | date('d-m-Y')) }}</td>
+            <td> Street :</td>
+            <td> {{ (locationDetails.street) }}</td>
+        </tr>
+        <tr>
+            <td> Number of places :</td>
+            <td> {{ (eventDetails.spots) }}</td>
+            <td> Postal Code :</td>
+            <td> {{ locationDetails.city }}</td>
+        </tr>
+        <tr>
+            <td> Duration :</td>
+            <td>{{ (eventDetails.duration) }}</td>
+            <td> Latitude :</td>
+            <td> {{ locationDetails.latitude }}</td>
+        </tr>
+        <tr>
+            <td> Description:</td>
+            <td> {{ (eventDetails.description) }}</td>
+            <td> Longitude :</td>
+            <td> {{ locationDetails.longitude }}</td>
+        </tr>
+    </table>
     </div>
+    <p>List of registered users: </p>
+    <table class="app-main" id="app-event-users">
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+        </tr>
 
-    <div>
-        <p>USERS REGISTERED</p>
         {% for item in userDetails %}
-            <p>{{ item.username }} - {{ item.name }} {{ item.lastName }}</p>
+        <tr>
+            <td><a href="{{ path('user_profile', {'user': item.name}) }}">{{ item.username }}</a></td>
+            <td>{{ item.name }} {{ item.lastName }}</td>
+        </tr>
         {% endfor %}
-    </div>
+    </table>
 
-    <a href="{{ path('home') }}"><button>Back</button></a>
+    <a href="{{ path('home') }}">
+        <button>Back</button>
+    </a>
 
 {% endblock %}

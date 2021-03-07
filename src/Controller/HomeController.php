@@ -3,31 +3,27 @@
 namespace App\Controller;
 
 use App\Entity\Subscription;
+use App\Repository\CampusRepository;
 use App\Repository\EventRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(EventRepository $eventRepository): Response
+    public function index(Request $request, EventRepository $eventRepository, CampusRepository $campusRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $listEvents = $eventRepository->findAll();
-
-        if (!$listEvents) {
-            throw $this->createNotFoundException(
-                'No items were found'
-            );
-        }
+        $campusList = $campusRepository->findAll();
 
         return $this->render('home/index.html.twig', [
             'eventList' => $listEvents,
+            'campusList' => $campusList,
         ]);
     }
 

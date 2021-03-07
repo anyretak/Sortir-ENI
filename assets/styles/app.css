@@ -1,0 +1,306 @@
+/* GENERAL & LAYOUT */
+body {
+    background-color: #7DC2AF;
+    font-family: 'RocknRoll One', sans-serif;
+    color: black;
+    margin: 0;
+}
+
+div.content {
+    padding: 1em;
+}
+
+a:link, a:visited {
+    margin: 1em;
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    color: dimgrey;
+}
+
+/* HEADER */
+header {
+    background-color: white;
+    color: #E27D5F;
+}
+
+div.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+img#logo {
+    height: 150px;
+    width: 150px;
+}
+
+a.nav:link, a.nav:visited {
+    margin: 1em;
+    text-decoration: none;
+    color: #E27D5F;
+}
+
+a.nav:hover {
+    color: black;
+}
+
+/* FORMS GENERAL */
+input,
+select {
+    width: 200px;
+    padding: 10px 10px;
+    margin: 10px 0;
+    border: 1px solid dimgrey;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 150px;
+    height: 60px;
+    background-color: #E27D5F;
+    color: white;
+    font-size: 16px;
+    padding: 20px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'RocknRoll One', sans-serif;
+    align-self: center;
+}
+
+button:hover {
+    color: black;
+}
+
+/* LOGIN */
+div.app-login {
+    margin: auto;
+    width: 500px;
+}
+
+form.app-login {
+    display: grid;
+    grid-template-columns: 200px 300px;
+    grid-column-gap: 16px;
+}
+
+label.app-login,
+button.app-login {
+    grid-column: 1 / 2;
+    padding: 0.5em 0.5em 0.5em 0;
+}
+
+input.app-login,
+div.app-login-extra {
+    grid-column: 2 / 3;
+    justify-content: center;
+    text-align: left;
+}
+
+div#app-login-checkbox {
+    display: inline-block;
+}
+
+input#_remember_me {
+    width: auto;
+    margin-right: 1em;
+}
+
+a#_forgot_pw {
+    margin-left: 0;
+}
+
+/* REGISTRATION FORM */
+form.app-register {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    grid-column-gap: 16px;
+}
+
+/* NEW LOCATION FORM */
+form.app-location {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    grid-column-gap: 16px;
+}
+
+/* EVENT FORM */
+form.app-event {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+div.app-event-s1 {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    grid-auto-rows: 60px;
+    grid-column-gap: 25px;
+}
+
+label#app-event-desc {
+    grid-row: span 2;
+}
+
+textarea#new_event_description {
+    grid-row: span 2;
+}
+
+div.app-event-s2 {
+    display: grid;
+    grid-template-columns: 200px 300px;
+    grid-auto-rows: 60px;
+    grid-column-gap: 25px;
+}
+
+div.app-event-s3 {
+    grid-column: span 2;
+}
+
+button.app-event-bt {
+    margin: 2em;
+}
+
+label.app-event {
+    padding: 1em 1em 1em 0;
+}
+
+div#add-button {
+    display: inline-block;
+}
+
+/* TABLES */
+table.app-main {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: auto;
+}
+
+table.app-main td,
+table.app-main th {
+    border: 1px solid dimgrey;
+    padding: 10px;
+}
+
+table.app-main tr:nth-child(even) {
+    background-color: #93c3b1;
+}
+
+table.app-main th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    background-color: #40B3A2;
+    color: black;
+}
+
+table#app-event-users {
+    width: 400px;
+}
+
+table.app-event-details {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.app-event-details td {
+    padding: 1em;
+}
+
+table.app-event-details tr td:nth-child(1),
+table.app-event-details tr td:nth-child(3) {
+    width: 200px;
+}
+
+table.app-event-details tr td:nth-child(2),
+table.app-event-details tr td:nth-child(4) {
+    width: 300px;
+}
+
+/* USER PROFILE */
+div.app-user-profile {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.app-profile {
+    display: inline-block;
+    text-align: left;
+    padding: 1em;
+    width: 200px;
+}
+
+div.extra-long {
+    width: 400px;
+}
+img.app-profile {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 150px;
+    height: 150px;
+}
+
+div.app-modify-profile {
+    display: grid;
+    grid-template-columns: 250px 600px;
+}
+
+div.wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+div#app-cancel-reason {
+    display: flex;
+    justify-content: center;
+}
+
+textarea#app-cancel-reason {
+    width: 100%;
+}
+
+/* MAIN PAGE */
+div.app-search-area {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.app-welcome-info {
+    display: flex;
+    justify-content: flex-end;
+}
+
+div.app-search {
+    padding: 1em;
+    align-content: center;
+}
+
+div.app-search-1,
+div.app-search-2 {
+    display: inline-block;
+    padding: 1em;
+}
+
+div.app-search-2 input {
+    width: 50px;
+}
+
+div.app-search-3 {
+    float: right;
+    padding-right: 10em;
+}
+
+button#app-search-bt {
+    height: 75px;
+    width: 200px;
+}
+

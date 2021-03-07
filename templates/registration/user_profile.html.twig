@@ -3,15 +3,32 @@
 {% block title %}Modify Profile{% endblock %}
 
 {% block content %}
-
-    {% for user in userDetails %}
-    <h3>{{ user.username }}</h3>
-
-        <p>Name : {{ user.name }}</p>
-        <p>Last Name : {{ user.lastName }}</p>
-        <p>Phone : {{ user.phone }}</p>
-        <p>Email : {{ user.email }}</p>
-        <p>Campus : {{ user.campus }}</p>
-    {% endfor %}
-  <a href="{{ path('home') }}"><button>Back</button></a>
+    <div class="app-user-profile">
+        {% for user in userDetails %}
+            <h3>{{ user.username|upper }}</h3>
+            <div class="app-profile">
+                <img class="app-profile" src="/sortir-eni/public{{ vich_uploader_asset(user, 'imageFile') }}"
+                     alt="{{ user.username }}"/>
+            </div>
+            <div class="app-profile">
+                <p>Name : </p>
+                <p>Last Name : </p>
+                <p>Phone : </p>
+                <p>Email : </p>
+                <p>Campus : </p>
+            </div>
+            <div class="app-profile">
+                <p>{{ user.name }}</p>
+                <p>{{ user.lastName }}</p>
+                <p>{{ user.phone }}</p>
+                <p>{{ user.email }}</p>
+                <p>{{ user.campus }}</p>
+            </div>
+        {% endfor %}
+        <div>
+            <a href="{{ path('home') }}">
+                <button>Back</button>
+            </a>
+        </div>
+    </div>
 {% endblock %}

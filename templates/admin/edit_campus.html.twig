@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Campus{% endblock %}
+
+{% block content %}
+    <p>Edit Campus</p>
+    <table class="app-main">
+        <tr>
+            <th>Campus</th>
+            <th>Actions</th>
+        </tr>
+        {% for campus in campusList %}
+            <tr>
+                <td>{{ campus.name }}</td>
+                <td><a href="">Edit</a>
+                    <a href="">Remove</a></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td><input type="text"/></td>
+            <td><a href="">Add</a></td>
+        </tr>
+    </table>
+    <a href="{{ path('home') }}"><button>Back</button></a>
+{% endblock %}
