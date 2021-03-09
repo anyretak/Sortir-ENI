@@ -3,6 +3,13 @@
 {% block title %}Delete Event{% endblock %}
 
 {% block content %}
+
+    {% for message in app.flashes('notice') %}
+        <div class="flash-notice">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <div class="app-user-profile">
         <h3>Cancel event</h3>
         <div class="app-profile">
@@ -12,26 +19,32 @@
             <p>Location : </p>
         </div>
         <div class="app-profile extra-long">
-            <p>{{ event.name }}</p>
+            <p id="cancel-reason-event">{{ event.name }}</p>
             <p>{{ event.date|date('d-m-Y') }}</p>
             <p>{{ event.campus }}</p>
-            <p>{{ event.location }} : {{ location.street }}, {{ location.city }}</p>
+            <p>{{ event.location }} : {{ location.street }} - {{ city.code }} - {{ location.city }}</p>
         </div>
     </div>
     <div id="app-cancel-reason" class="app-user-profile">
-        {{ form_start(form) }}
         <div class="app-profile">
-            {{ form_label(form.description) }}
+            <label for="cancel-reason">Reason for canceling:</label>
         </div>
         <div class="app-profile extra-long">
-            {{ form_widget(form.description, {'value' : ''}) }}
+            <textarea id="cancel-reason"></textarea>
         </div>
     </div>
     <div class="app-user-profile">
-        <button class="app-event-bt" type="submit">Submit</button>
+        <a href="{{ path ('cancel_event', {'event': event.name}) }}">
+            <button class="app-event-bt" type="button" onclick="cancelEvent()">Submit</button>
+        </a>
         <a href="{{ path ('home') }}">
             <button class="app-event-bt" type="button">Back</button>
         </a>
-        {{ form_end(form) }}
     </div>
+
+    {% block javascripts %}
+        {{ parent() }}
+        {{ encore_entry_script_tags('edit_event') }}
+    {% endblock %}
+
 {% endblock %}

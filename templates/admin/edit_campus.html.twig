@@ -3,8 +3,8 @@
 {% block title %}Edit Campus{% endblock %}
 
 {% block content %}
-    <p>Edit Campus</p>
-    <table class="app-main">
+    <h3>Edit Campus</h3>
+    <table class="app-main" id="app-campus-table">
         <tr>
             <th>Campus</th>
             <th>Actions</th>
@@ -13,13 +13,19 @@
             <tr>
                 <td>{{ campus.name }}</td>
                 <td><a href="">Edit</a>
-                    <a href="">Remove</a></td>
+                    <span class="app-nav" onclick="removeCampus(event)">Remove</span></td>
             </tr>
         {% endfor %}
-        <tr>
-            <td><input type="text"/></td>
-            <td><a href="">Add</a></td>
+        <tr id="app-js-new">
+            <td><input id="app-js-campus-name" type="text"/></td>
+            <td><button onclick="addCampus()">Add</button></td>
         </tr>
     </table>
     <a href="{{ path('home') }}"><button>Back</button></a>
+
+    {% block javascripts %}
+        {{ parent() }}
+        {{ encore_entry_script_tags('edit_event') }}
+    {% endblock %}
+
 {% endblock %}

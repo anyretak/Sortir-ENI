@@ -34,7 +34,6 @@ class City
     private $code;
 
     /**
-     * @Groups("city_location")
      * @ORM\OneToMany(targetEntity=Location::class, mappedBy="city")
      */
     private $locations;

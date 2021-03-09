@@ -3,7 +3,7 @@
 {% block title %}Edit City{% endblock %}
 
 {% block content %}
-    <p>Edit City</p>
+    <h3>Edit City</h3>
     <table class="app-main" id="app-city-table">
         <tr>
             <th>City</th>
@@ -15,7 +15,7 @@
                 <td>{{ city.name }}</td>
                 <td>{{ city.code }}</td>
                 <td><a href="">Edit</a>
-                    <a onclick="removeCity()">Remove</a></td>
+                    <span class="app-nav" onclick="removeCity(event)">Remove</span></td>
             </tr>
         {% endfor %}
         <tr id="app-js-new">
@@ -33,7 +33,6 @@
     {% block javascripts %}
         {{ parent() }}
         {{ encore_entry_script_tags('edit_event') }}
-        {# <script src="{{ asset('build/runtime.js') }}"></script> #}
     {% endblock %}
 
 {% endblock %}

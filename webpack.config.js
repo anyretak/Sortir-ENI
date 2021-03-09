@@ -24,6 +24,7 @@ Encore
     .addEntry('main_search', './assets/main_search.js')
     .addEntry('edit_event', './assets/edit_event.js')
 
+
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 

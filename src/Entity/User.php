@@ -78,6 +78,13 @@ class User implements UserInterface, \Serializable
      */
     private $subscriptions;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -354,5 +361,17 @@ class User implements UserInterface, \Serializable
             $this->password,
             ) = unserialize($serialized);
 
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
     }
 }

@@ -121,4 +121,12 @@ class Campus
 
         return $this;
     }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getStudents(): Collection
+    {
+        return $this->students;
+    }
 }

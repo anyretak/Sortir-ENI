@@ -3,68 +3,69 @@
 namespace App\Controller;
 
 use App\Form\CancelEventType;
-use App\Form\NewEventType;
+use App\Form\EventType;
+use App\Repository\CampusRepository;
+use App\Repository\CityRepository;
 use App\Repository\EventRepository;
+use App\Repository\LocationRepository;
 use App\Repository\StatusRepository;
+use App\Repository\SubscriptionRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+
 
 class EventController extends AbstractController
 {
     #[Route('/new_event', name: 'event')]
-    public function newEvent(Request $request, StatusRepository $statusRepository): Response
+    public function newEvent(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, CityRepository $cityRepository, CampusRepository $campusRepository, LocationRepository $locationRepository): Response
     {
         $user = $this->getUser();
+        $user = $userRepository->findOneBy(['username' => $user->getUsername()]);
+        $userCampus = $user->getCampus();
+        $city = $cityRepository->findAll();
+        $campus = $campusRepository->findAll();
+        $location = $locationRepository->findAll();
 
-        $form = $this->createForm(NewEventType::class);
+        $form = $this->createForm(EventType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-
-/*            REMOVE DUPLICATED CODE*/
             if ($form->getClickedButton() === $form->get('create')) {
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $event = $form->getData();
                 $state = $statusRepository->findOneBy(['state' => 'Created']);
-                $event->setStatus($state);
-                $event->setUser($user);
-                $entityManager->persist($event);
-                $entityManager->flush();
-
-                $this->addFlash(
-                    'notice',
-                    'Success! New event was created. Do you want to publish it now?'
-                );
-
-                return $this->redirectToRoute('event');
+                $flashMessage = 'Success! New event was created. Do you want to publish it now?';
             }
 
             if ($form->getClickedButton() === $form->get('publish')) {
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $event = $form->getData();
                 $state = $statusRepository->findOneBy(['state' => 'Open']);
-                $event->setStatus($state);
-                $event->setUser($user);
-                $entityManager->persist($event);
-                $entityManager->flush();
-
-                $this->addFlash(
-                    'notice',
-                    'Success! New event was created and it is now opened!'
-                );
-
-                return $this->redirectToRoute('home');
+                $flashMessage = 'Success! New event was created and it is now open!';
             }
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $event = $form->getData();
+            $event->setStatus($state);
+            $event->setUser($user);
+            $event->setCampus($userCampus);
+            $entityManager->persist($event);
+            $entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $flashMessage,
+            );
+
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('event/new_event.html.twig', [
             'form' => $form->createView(),
+            'city' => $city,
+            'campus' => $campus,
+            'userCampus' => $userCampus,
+            'location' => $location,
         ]);
     }
 
@@ -88,101 +89,59 @@ class EventController extends AbstractController
     }
 
     #[Route('/edit_event/{event}', name: 'edit_event')]
-    public function editEvent(Request $request, $event, EventRepository $eventRepository, StatusRepository $statusRepository): Response
+    public function editEvent($event, Request $request, EventRepository $eventRepository, StatusRepository $statusRepository): Response
     {
         $event = $eventRepository->findOneBy(['name' => $event]);
-        $location = $event->getLocation();
-        $form = $this->createForm(NewEventType::class, $event);
+        $location = $event -> getLocation();
+        $city = $location -> getCity();
+
+        $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             if ($form->getClickedButton() === $form->get('create')) {
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $event = $form->getData();
                 $state = $statusRepository->findOneBy(['state' => 'Created']);
-                $event->setStatus($state);
-                $entityManager->flush();
-
-                $this->addFlash(
-                    'notice',
-                    'Success! Event details were updated.'
-                );
-
-                return $this->redirectToRoute('home');
+                $flashMessage = 'Success! Event was modified. Do you want to publish it now?';
             }
 
             if ($form->getClickedButton() === $form->get('publish')) {
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $event = $form->getData();
                 $state = $statusRepository->findOneBy(['state' => 'Open']);
-                $event->setStatus($state);
-                $entityManager->flush();
-
-                $this->addFlash(
-                    'notice',
-                    'Success! Event is now open.'
-                );
-
-                return $this->redirectToRoute('home');
+                $flashMessage = 'Success! Your event was published and it is now open!';
             }
-        }
-
-        return $this->render('event/edit_event.html.twig', [
-            'form' => $form->createView(),
-            'event' => $event,
-        ]);
-    }
-
-    #[Route('/cancel_event/{event}', name: 'cancel_event')]
-    public function cancelEvent(Request $request, $event, EventRepository $eventRepository, StatusRepository $statusRepository): Response
-    {
-        $event = $eventRepository->findOneBy(['name' => $event]);
-        $location = $event->getLocation();
-
-        $form = $this->createForm(CancelEventType::class, $event);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
 
             $entityManager = $this->getDoctrine()->getManager();
-            $state = $statusRepository->findOneBy(['state' => 'Cancelled']);
+            $event = $form->getData();
             $event->setStatus($state);
             $entityManager->flush();
 
             $this->addFlash(
                 'notice',
-                'Success! Event details updated.'
+                $flashMessage,
             );
 
             return $this->redirectToRoute('home');
         }
 
-        return $this->render('event/cancel_event.html.twig', [
+        return $this->render('event/edit_event.html.twig', [
             'form' => $form->createView(),
             'event' => $event,
             'location' => $location,
+            'city' => $city,
         ]);
     }
 
-
-    #[Route('/ajax', name: 'ajax')]
-    public function ajaxEvent(Request $request, EventRepository $eventRepository, StatusRepository $statusRepository): Response
+    #[Route('/cancel_event/{event}', name: 'cancel_event')]
+    public function cancelEvent($event, EventRepository $eventRepository): Response
     {
-        if ($request->isXmlHttpRequest()) {
+        $event = $eventRepository->findOneBy(['name' => $event]);
+        $location = $event->getLocation();
+        $city = $location->getCity();
 
-            $eventData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $event = $propertyAccessor->getValue($eventData, '[data]');
-
-            $state = $statusRepository->findOneBy(['state' => 'Open']);
-            $eventUpdated = $eventRepository->findOneBy(['name' => $event]);
-            $eventUpdated->setStatus($state);
-            $this->getDoctrine()->getManager()->flush();
-
-            return new Response('Its coming from controller');
-        }
+        return $this->render('event/cancel_event.html.twig', [
+            'event' => $event,
+            'location' => $location,
+            'city'=> $city,
+        ]);
     }
 }

@@ -19,23 +19,19 @@
             </div>
             <div class='app-event-s2'>
                 {{ form_label(form.campus) }} {{ form_widget(form.campus) }}
-                {{ form_label(form.location_details.city) }} {{ form_widget(form.location_details.city) }}
                 {{ form_label(form.location) }} {{ form_widget(form.location) }}
-                {{ form_label(form.location_details.street) }} {{ form_widget(form.location_details.street) }}
-                {{ form_label(form.city_details.code) }} {{ form_widget(form.city_details.code) }}
-                {{ form_label(form.location_details.latitude) }} {{ form_widget(form.location_details.latitude) }}
-                {{ form_label(form.location_details.longitude) }} {{ form_widget(form.location_details.longitude) }}
+                <div><label for="updateStreet">Street:</label></div>
+                <div><input id="updateStreet" type="text" value="{{ location.street }}"/></div>
+                <div><label for="updateCode">Postal Code:</label></div>
+                <div><input id="updateCode" type="text" value="{{ city.code }}"/></div>
+                <div><label for="updateLat">Latitude:</label></div>
+                <div><input type="number" id="updateLat" value="{{ location.latitude }}"/></div>
+                <div><label for="updateLat">Longitude:</label></div>
+                <div><input type="number" id="updateLong" value="{{ location.longitude }}"/></div>
             </div>
             <div class='app-event-s3'>
-
-                {{ form_widget(form.create, {'attr' : { 'class': 'app-event' }, 'label' : 'Modify' }) }}
-
-                {{ form_widget(form.publish, { 'attr' : { 'class': 'app-event' } }) }}
-
-                <button class="app-event-bt" type="button" id="app-js-event" data-event="{{ event.name }}"
-                        onclick="updateEvent()"> Publish AJAX
-                </button>
-
+                {{ form_widget(form.create, {'label' : 'Modify' }) }}
+                {{ form_widget(form.publish) }}
                 <a href="{{ path ('cancel_event', {'event':  event.name }) }}">
                     <button class="app-event-bt" type="button">Cancel Event</button>
                 </a>
@@ -43,7 +39,6 @@
                     <button class="app-event-bt" type="button">Back</button>
                 </a>
             </div>
-            {% do form.location_details.name.setRendered() %}
             {{ form_end(form) }}
         </div>
     </div>
@@ -51,7 +46,6 @@
     {% block javascripts %}
         {{ parent() }}
         {{ encore_entry_script_tags('edit_event') }}
-        {# <script src="{{ asset('build/runtime.js') }}"></script> #}
     {% endblock %}
 
 {% endblock %}

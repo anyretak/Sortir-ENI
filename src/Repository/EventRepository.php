@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +21,38 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    // /**
-    //  * @return Event[] Returns an array of Event objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findByMinDate($value)
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
+            ->andWhere('e.date >= :val')
             ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
+            /*            ->orderBy('e.id', 'ASC')
+                        ->setMaxResults(10)*/
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Event
+    public function findByMaxDate($value)
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
+            ->andWhere('e.date <= :val')
             ->setParameter('val', $value)
+            /*            ->orderBy('e.id', 'ASC')
+                        ->setMaxResults(10)*/
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    public function findByDate($value1, $value2)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.date >= ?1')
+            ->andWhere('e.date <= ?2')
+            ->setParameters(new ArrayCollection([
+                new Parameter('1', $value1),
+                new Parameter('2', $value2)
+            ]))
+            ->getQuery()
+            ->getResult();
+    }
 }

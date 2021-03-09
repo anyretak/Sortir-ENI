@@ -1,0 +1,38 @@
+<tbody id="main-table">
+{% for item in eventList %}
+    <tr>
+        <td>
+            {{ item.name }}
+            <p class="hidden">{{ item.campus }}</p>
+        </td>
+        <td>{{ item.date | date('d-m-Y H:i:s') }}</td>
+        <td>{{ item.limitDate | date('d-m-Y') }}</td>
+        <td>{{ item.subscriptions|length }}/{{ item.spots }}</td>
+        <td>{{ item.status }}</td>
+        <td>{% if app.user.name in item.subscriptions.values %}
+                X
+            {% endif %}
+        </td>
+        <td><a href="{{ path('user_profile', {'user': item.user}) }}">{{ item.user }}</a></td>
+        <td>{% set archived = 'now'|date_modify("-30 day") %}
+            {% if item.date > archived %}
+                <a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
+            {% endif %}
+            {% if item.user != app.user and (item.status == 'Open' or item.status == 'Closed') %}
+                {% if app.user.name in item.subscriptions.values %}
+                    <span id="userUnsub" class="app-nav" data-user-sub="{{ app.user }}" data-event-sub="{{ item.name }}"
+                          onclick="userUnsubscribe(event)">Unsubscribe
+                    </span>
+                {% elseif item.limitDate > date() and item.status != 'Closed' %}
+                    <span id="userSub" class="app-nav" data-user-sub="{{ app.user }}" data-event-sub="{{ item.name }}"
+                          onclick="userSubscribe(event)">Subscribe
+                    </span>
+                {% endif %}
+            {% endif %}
+            {% if (item.user == app.user or is_granted('ROLE_ADMIN')) and item.status != 'Active' and item.date > archived %}
+                <a href="{{ path('edit_event', {'event': item.name}) }}">Edit</a>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+</tbody>

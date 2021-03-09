@@ -67,7 +67,8 @@ class AppUserAuthenticator extends AbstractFormLoginAuthenticator implements Pas
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
+        /* $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);*/
+        $user = $this->entityManager->getRepository(User::class)->loadUserByUsername($credentials['username']);
 
         if (!$user) {
             // fail authentication with a custom error
@@ -92,9 +93,9 @@ class AppUserAuthenticator extends AbstractFormLoginAuthenticator implements Pas
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+        /*if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
-        }
+        }*/
 
         /*$user = $token-> getUser(); ADD TO REDIRECT TO DIFFERENT PAGES */
 

@@ -10,6 +10,15 @@ div.content {
     padding: 1em;
 }
 
+span.app-nav:hover {
+    cursor: pointer;
+    color: dimgrey;
+}
+
+span.app-nav {
+    padding: 1em;
+}
+
 a:link, a:visited {
     margin: 1em;
     text-decoration: none;
@@ -18,6 +27,23 @@ a:link, a:visited {
 
 a:hover {
     color: dimgrey;
+}
+
+p.hidden {
+    display: none;
+}
+
+button.nav-user-admin {
+    width: 250px;
+}
+
+td.user-1 {
+color:black;
+}
+
+td.user-,
+span.user- {
+    color:darkred;
 }
 
 /* HEADER */

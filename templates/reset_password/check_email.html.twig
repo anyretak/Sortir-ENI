@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block content %}
+    <p>
+        An email has been sent that contains a link that you can click to reset your password.
+        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+    </p>
+    <p> If you don't receive an email please check your spam folder or try again.</p>
+
+    <a href="{{ path('app_login') }}"><button>Login</button></a>
+{% endblock %}

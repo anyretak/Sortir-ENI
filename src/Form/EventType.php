@@ -16,7 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 
-class NewEventType extends AbstractType
+class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -67,12 +67,14 @@ class NewEventType extends AbstractType
                 'label_attr' => ['class' => 'app-event'],
                 'attr' => ['class' => 'app-event']
             ])
-            ->add('create', SubmitType::class)
-            ->add('publish', SubmitType::class);
-
-        $builder->add('city_details', CityType::class, ['mapped' => false, 'label' => false]);
-        $builder->add('location_details', LocationType::class, ['mapped' => false, 'label' => false]);
-
+            ->add('create', SubmitType::class, [
+                'attr' => ['class' => 'app-event-bt'],
+                'label' => 'Register'
+            ])
+            ->add('publish', SubmitType::class, [
+                'attr' => ['class' => 'app-event-bt'],
+                'label' => 'Publish'
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

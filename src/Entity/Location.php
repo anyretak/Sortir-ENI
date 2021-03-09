@@ -6,6 +6,7 @@ use App\Repository\LocationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=LocationRepository::class)
@@ -13,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Location
 {
     /**
+     * @Groups("location")
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -20,21 +22,25 @@ class Location
     private $id;
 
     /**
+     * @Groups("location")
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     * @Groups("location")
      * @ORM\Column(type="string", length=255)
      */
     private $street;
 
     /**
+     * @Groups("location")
      * @ORM\Column(type="float")
      */
     private $latitude;
 
     /**
+     * @Groups("location")
      * @ORM\Column(type="float")
      */
     private $longitude;

@@ -11,8 +11,8 @@
     <div class="app-search">
         <div class="app-search-1">
             <div>
-                Choose your campus:
-                <select onchange="filterCampus(this.value)">
+                <label for="searchCampus">Select campus:</label>
+                <select id="searchCampus" onchange="filterCampus()">
                     <option value=""></option>
                     {% for campus in campusList %}
                         <option value="{{ campus.name }}">{{ campus.name }}</option>
@@ -20,23 +20,22 @@
                 </select>
             </div>
             <div>
-                Search by event name:
+                <label for="app-input">Search by event name:</label>
                 <input type="text" id="app-input" onkeyup="nameSearchFunction()" placeholder="Search by event name...">
             </div>
             <div>
-                Search by dates:
-                <input id="searchFrom" class="searchInput" type="date" placeholder="From"/>
-                <input id="searchTo" class="searchInput" type="date" placeholder="To">
+                <label for="searchFrom">From:</label> <input id="searchFrom" class="searchInput" type="date" placeholder="From" onchange="dateFilter()"/>
+                <label for="searchTo">To:</label> <input id="searchTo" class="searchInput" type="date" placeholder="To" onchange="dateFilter()">
             </div>
         </div>
         <div class="app-search-2">
-            <input id="_type_1" name="_type_1" type="checkbox">
+            <input id="_type_1" name="_type_1" class="check" type="checkbox" data-this-user="{{ app.user }}" onchange="filterUser(event)">
             <label for="_type_1">My events</label> <br>
-            <input id="_type_2" name="_type_2" type="checkbox">
+            <input id="_type_2" name="_type_2" class="check" type="checkbox" onchange="filterSubscribed()">
             <label for="_type_2">Events I am currently subscribed to</label> <br>
-            <input id="_type_3" name="_type_3" type="checkbox">
+            <input id="_type_3" name="_type_3" class="check" type="checkbox" onchange="filterNotSubscribed()">
             <label for="_type_3">Events I am not subscribed to</label> <br>
-            <input id="_type_4" name="_type_4" type="checkbox">
+            <input id="_type_4" name="_type_4" class="check" type="checkbox" onchange="filterPassed()">
             <label for="_type_4">Past events</label>
         </div>
         <div class="app-search-3">
@@ -63,32 +62,7 @@
                 <th>Organizer</th>
                 <th>Actions</th>
             </tr>
-            {% for item in eventList %}
-                <tr>
-                    <td>{{ item.name }} {{ item.campus }}</td>
-                    <td>{{ item.date | date('d-m-Y H:i:s') }}</td>
-                    <td>{{ item.limitDate | date('d-m-Y') }}</td>
-                    <td>{{ item.subscriptions|length }}/{{ item.spots }}</td>
-                    <td>{{ item.status }}</td>
-                    <td>{% if app.user.name in item.subscriptions.values %}
-                            X
-                        {% endif %}
-                    </td>
-                    <td><a href="{{ path('user_profile', {'user': item.user}) }}">{{ item.user }}</a></td>
-                    <td><a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
-                        {% if item.user != app.user and item.status == 'Open' %}
-                            {% if app.user.name in item.subscriptions.values %}
-                                <a href="{{ path('remove', {'event': item.name, 'user': app.user}) }}">Unsubscribe</a>
-                            {% else %}
-                                <a href="{{ path('subscribe', {'event': item.name, 'user': app.user}) }}">Subscribe</a>
-                            {% endif %}
-                        {% endif %}
-                        {% if item.user == app.user %}
-                            <a href="{{ path('edit_event', {'event': item.name}) }}">Edit</a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
+                {{ include('templates/_table.html.twig') }}
         </table>
     </div>
 
@@ -98,11 +72,9 @@
         </a>
     </div>
 
-
     {% block javascripts %}
         {{ parent() }}
         {{ encore_entry_script_tags('main_search') }}
-        {# <script src="{{ asset('build/runtime.js') }}"></script> #}
     {% endblock %}
 
 {% endblock %}
