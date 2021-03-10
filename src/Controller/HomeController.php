@@ -7,6 +7,7 @@ use App\Repository\EventRepository;
 use App\Repository\StatusRepository;
 use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,9 @@ class HomeController extends AbstractController
         $stateFinished = $statusRepository->findOneBy(['state' => 'Finished']);
         $stateActive = $statusRepository->findOneBy(['state' => 'Active']);
         $date = new DateTime();
+        /*$date = new DateTime('now', new DateTimeZone('Europe/Paris'));*/
         $date->getTimestamp();
+        dump($date);
 
         foreach ($listEvents as $event) {
             $eventStatus = $event->getStatus()->getState();
@@ -35,7 +38,9 @@ class HomeController extends AbstractController
             $eventDuration->add($interval);
 
             if ($eventStatus !== 'Cancelled') {
-                if ($eventLimitDate < $date and $eventDate > $date) {
+                if ($eventLimitDate > $date and $eventDate > $date) {
+                    ;
+                } else if ($eventLimitDate < $date and $eventDate > $date) {
                     $event->setStatus($stateClosed);
                 } else if ($eventLimitDate < $date and $eventDate < $date) {
                     if ($eventDuration > $date) {

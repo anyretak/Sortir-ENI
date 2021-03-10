@@ -1,16 +1,14 @@
-<tbody id="user-table">
+<tbody>
 {% for user in userList %}
     <tr>
         <td class="user-{{ user.isActive }}">{{ user.username }}</td>
         <td>{{ user.name }} {{ user.lastName }}</td>
         <td>{% if user.isActive == '1' %}
-                <span class="app-nav user-{{ user.isActive }}" data-user-data="{{ user.name }}"
-                      onclick="suspendUser(event)">Suspend Account</span>
+                <span class="app-nav user-{{ user.isActive }}" id="app-user-suspend" data-user-data="{{ user.name }}">Suspend Account</span>
             {% else %}
-                <span class="app-nav user-{{ user.isActive }}" data-user-data="{{ user.name }}"
-                      onclick="suspendUser(event)">Restore Account</span>
+                <span class="app-nav user-{{ user.isActive }}" id="app-user-suspend" data-user-data="{{ user.name }}">Restore Account</span>
             {% endif %}
-            <span class="app-nav" data-user-data="{{ user.name }}" onclick="deleteUser(event)"> Delete</span></td>
+            <span class="app-nav" id="app-user-delete" data-user-data="{{ user.name }}"> Delete</span></td>
     </tr>
 {% endfor %}
 </tbody>

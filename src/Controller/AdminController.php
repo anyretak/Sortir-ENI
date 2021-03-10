@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -20,161 +21,153 @@ use League\Csv\Reader;
 
 class AdminController extends AbstractController
 {
-    #[Route('/admin/edit_city', name: 'edit_city')]
-    public function editCity(CityRepository $cityRepository, Request $request, SerializerInterface $serializer): Response
+    //******************************************************************//
+    //**************************MANAGE CITY*****************************//
+    //******************************************************************//
+    #[Route('/admin/admin_city', name: 'admin_city')]
+    public function editCity(CityRepository $cityRepository): Response
     {
         $cityList = $cityRepository->findAll();
-
-        if ($request->isXmlHttpRequest()) {
-
-            $cityData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $cityName = $propertyAccessor->getValue($cityData, '[city]');
-            $cityCode = $propertyAccessor->getValue($cityData, '[code]');
-
-            $city = new City();
-            $city->setName($cityName);
-            $city->setCode($cityCode);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($city);
-            $entityManager->flush();
-
-            /*            $cityList = $cityRepository->findAll();
-                        $cityListJson = $serializer->serialize($cityList, 'json', ['groups' => ['city']]);  */
-
-            return new Response("Hello! City added");
-        }
-
-        return $this->render('admin/edit_city.html.twig', [
+        return $this->render('admin/admin_city.html.twig', [
             'cityList' => $cityList,
         ]);
     }
 
-    #[Route('/admin/mod_city', name: 'mod_city')]
-    public function removeCity(Request $request, CityRepository $cityRepository): Response
+    #[Route('/admin/add_city', name: 'add_city')]
+    public function addCity(Request $request): Response
     {
-        if ($request->isXmlHttpRequest()) {
+        $data = $request->toArray();
+        $city = $data['city'];
+        $code = $data['code'];
 
-            $cityData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $cityCode = $propertyAccessor->getValue($cityData, '[code]');
-            $cityX = $cityRepository->findOneBy(['code' => $cityCode]);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($cityX);
-            $entityManager->flush();
+        $newCity = new City();
+        $newCity->setName($city);
+        $newCity->setCode($code);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($newCity);
+        $entityManager->flush();
 
-            return new Response('Done! City removed successfully!');
-        }
+        /*$cityList = $cityRepository->findAll();
+        $cityListJson = $serializer->serialize($cityList, 'json', ['groups' => ['city']]);
+        return new JsonResponse($cityListJson, Response::HTTP_OK, [], true);*/
+        return new Response();
     }
 
-    #[Route('/admin/edit_campus', name: 'edit_campus')]
-    public function editCampus(CampusRepository $campusRepository, Request $request, SerializerInterface $serializer): Response
+    #[Route('/admin/delete_city', name: 'delete_city')]
+    public function removeCity(Request $request, CityRepository $cityRepository): Response
+    {
+        $data = $request->toArray();
+        $city = $data['city'];
+        $cityX = $cityRepository->findOneBy(['name' => $city]);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($cityX);
+        $entityManager->flush();
+
+        return new Response();
+    }
+
+    //******************************************************************//
+    //**************************MANAGE CAMPUS***************************//
+    //******************************************************************//
+    #[Route('/admin/admin_campus', name: 'admin_campus')]
+    public function editCampus(CampusRepository $campusRepository): Response
     {
         $campusList = $campusRepository->findAll();
-
-        if ($request->isXmlHttpRequest()) {
-
-            $campusData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $campusName = $propertyAccessor->getValue($campusData, '[campus]');
-
-            $campus = new Campus();
-            $campus->setName($campusName);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($campus);
-            $entityManager->flush();
-
-            return new Response("Hello! New campus added!");
-        }
-
-        return $this->render('admin/edit_campus.html.twig', [
+        return $this->render('admin/admin_campus.html.twig', [
             'campusList' => $campusList,
         ]);
     }
 
-    #[Route('/admin/mod_campus', name: 'mod_campus')]
+    #[Route('/admin/add_campus', name: 'add_campus')]
+    public function addCampus(Request $request): Response
+    {
+        $data = $request->toArray();
+        $campus = $data['campus'];
+        $newCampus = new Campus();
+        $newCampus->setName($campus);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($newCampus);
+        $entityManager->flush();
+
+        return new Response();
+    }
+
+    #[Route('/admin/delete_campus', name: 'delete_campus')]
     public function removeCampus(Request $request, CampusRepository $campusRepository): Response
     {
-        if ($request->isXmlHttpRequest()) {
+        $data = $request->toArray();
+        $campus = $data['campus'];
+        $campusX = $campusRepository->findOneBy(['name' => $campus]);
 
-            $campusData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $campusName = $propertyAccessor->getValue($campusData, '[campus]');
-            $campusX = $campusRepository->findOneBy(['name' => $campusName]);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($campusX);
-            $entityManager->flush();
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($campusX);
+        $entityManager->flush();
 
-            return new Response('Done! Campus removed successfully!');
-        }
+        return new Response();
+    }
+
+    //******************************************************************//
+    //****************************MANAGE USERS**************************//
+    //******************************************************************//
+    #[Route('/admin/user_admin', name: 'user_admin')]
+    public function userAdmin(): Response
+    {
+        return $this->render('admin/user_admin.html.twig');
+    }
+
+    #[Route('/admin/admin_user', name: 'admin_user')]
+    public function userManage(UserRepository $userRepository): Response
+    {
+        $userList = $userRepository->findAll();
+        return $this->render('admin/admin_user.html.twig', [
+            'userList' => $userList,
+        ]);
     }
 
     #[Route('/admin/user_suspend', name: 'user_suspend')]
     public function userSuspend(Request $request, UserRepository $userRepository): Response
     {
-        if ($request->isXmlHttpRequest()) {
-
-            $userData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $userName = $propertyAccessor->getValue($userData, '[user]');
-            $user = $userRepository->findOneBy(['name' => $userName]);
-            $userStatus = $user->getIsActive();
-
-            if ($userStatus == "") {
-                $user->setIsActive(true);
-            } else {
-                $user->setIsActive(false);
-            }
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $userList = $userRepository->findAll();
-            return $this->render('templates/_user_table.html.twig', [
-                'userList' => $userList,
-            ]);
+        $data = $request->toArray();
+        $user = $data['user'];
+        $user = $userRepository->findOneBy(['name' => $user]);
+        $userStatus = $user->getIsActive();
+        if ($userStatus == "") {
+            $user->setIsActive(true);
+        } else {
+            $user->setIsActive(false);
         }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $userList = $userRepository->findAll();
+        return new Response($this->renderView('templates/_user_table.html.twig', [
+            'userList' => $userList,
+        ]));
     }
 
     #[Route('/admin/user_delete', name: 'user_delete')]
     public function userDelete(Request $request, UserRepository $userRepository): Response
     {
-        if ($request->isXmlHttpRequest()) {
+        $data = $request->toArray();
+        $user = $data['user'];
+        $userX = $userRepository->findOneBy(['name' => $user]);
 
-            $userData = $request->request->all();
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $userName = $propertyAccessor->getValue($userData, '[user]');
-            $user = $userRepository->findOneBy(['name' => $userName]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($userX);
+        $entityManager->flush();
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            return new Response('Hello');
-        }
+        return new Response();
     }
 
-    #[Route('/admin/user', name: 'user_admin')]
-    public function adminUser(): Response
-    {
-        return $this->render('admin/user_admin.html.twig');
-    }
-
-    #[Route('/admin/user_manage', name: 'user_manage')]
-    public function userManage(UserRepository $userRepository): Response
-    {
-        $userList = $userRepository->findAll();
-
-        return $this->render('admin/user_manage.html.twig', [
-            'userList' => $userList,
-        ]);
-    }
-
+    //******************************************************************//
+    //***************************ADD NEW USERS**************************//
+    //******************************************************************//
     #[Route('/admin/user_register', name: 'app_register')]
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function userRegister(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);

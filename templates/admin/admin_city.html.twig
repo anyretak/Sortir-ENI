@@ -15,14 +15,14 @@
                 <td>{{ city.name }}</td>
                 <td>{{ city.code }}</td>
                 <td><a href="">Edit</a>
-                    <span class="app-nav" onclick="removeCity(event)">Remove</span></td>
+                    <span class="app-nav" id="app-city-remove" data-city-name="{{ city.name }}">Remove</span></td>
             </tr>
         {% endfor %}
-        <tr id="app-js-new">
-            <td><input id="app-js-city-name" type="text"/></td>
-            <td><input id="app-js-city-code" type="text"/></td>
+        <tr>
+            <td><label for="app-city-name"><input id="app-city-name" type="text"/></label></td>
+            <td><label for="app-city-code"><input id="app-city-code" type="text"/></label></td>
             <td>
-                <button onclick="addCity()">Add</button>
+                <button id="app-city-add">Add</button>
             </td>
         </tr>
     </table>
@@ -32,7 +32,7 @@
 
     {% block javascripts %}
         {{ parent() }}
-        {{ encore_entry_script_tags('edit_event') }}
+        {{ encore_entry_script_tags('app_admin_city') }}
     {% endblock %}
 
 {% endblock %}

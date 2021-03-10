@@ -48,6 +48,8 @@ function dateFilter() {
     dateMinValue.setHours(0);
     dateMaxValue.setHours(0);
 
+    //SEND IN JSON FORMAT (TO SEND ACTUAL OBJECT) or actual value not converted to date
+
     $.ajax({
         type: "POST",
         url: 'http://localhost/sortir-eni/public/ajax/date_filter',
@@ -162,6 +164,7 @@ function userSubscribe(e) {
     let subUser = target.dataset.userSub;
     let subEvent = target.dataset.eventSub;
 
+
     $.ajax({
         type: "POST",
         url: 'http://localhost/sortir-eni/public/ajax/user_sub',
@@ -203,3 +206,5 @@ function userUnsubscribe(e) {
 }
 
 window.userUnsubscribe = userUnsubscribe;
+
+

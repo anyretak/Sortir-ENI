@@ -39,8 +39,16 @@
                             <option value="{{ city.name }}">{{ city.name }}</option>
                         {% endfor %}
                     </select></div>
-                {{ form_label(form.location) }}
-                <div id="add-button">{{ form_widget(form.location) }} <a href="{{ path('add_location') }}">New</a></div>
+
+                <div><label for="selectLocation">Location:</label></div>
+                <div><select id="selectLocation" onchange="updateLocation()">
+                        <option value=""></option>
+                        {% for location in location %}
+                                <option value="{{ location.name }}">{{ location.name }}</option>
+                        {% endfor %}
+                    </select></div>
+
+
                 <div><label for="updateStreet">Street:</label></div>
                 <div><input id="updateStreet" type="text"/></div>
                 <div><label for="updateCode">Postal Code:</label></div>
@@ -58,6 +66,7 @@
                 </a>
             </div>
             {% do form.campus.setRendered() %}
+            {% do form.location.setRendered() %}
             {{ form_end(form) }}
         </div>
     </div>
@@ -65,6 +74,7 @@
     {% block javascripts %}
         {{ parent() }}
         {{ encore_entry_script_tags('edit_event') }}
+        <script src="{{ asset('edit_event.js') }}"></script>
     {% endblock %}
 
 {% endblock %}

@@ -23,6 +23,9 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('main_search', './assets/main_search.js')
     .addEntry('edit_event', './assets/edit_event.js')
+    .addEntry('app_admin_city', './assets/app_admin_city.js')
+    .addEntry('app_admin_campus', './assets/app_admin_campus.js')
+    .addEntry('app_admin_user', './assets/app_admin_user.js')
 
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

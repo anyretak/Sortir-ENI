@@ -13,19 +13,19 @@
             <tr>
                 <td>{{ campus.name }}</td>
                 <td><a href="">Edit</a>
-                    <span class="app-nav" onclick="removeCampus(event)">Remove</span></td>
+                    <span class="app-nav" id="app-campus-remove" data-campus-name="{{ campus.name }}">Remove</span></td>
             </tr>
         {% endfor %}
-        <tr id="app-js-new">
-            <td><input id="app-js-campus-name" type="text"/></td>
-            <td><button onclick="addCampus()">Add</button></td>
+        <tr>
+            <td><label for="app-campus-name"><input id="app-campus-name" type="text"/></label></td>
+            <td><button id="app-campus-add">Add</button></td>
         </tr>
     </table>
     <a href="{{ path('home') }}"><button>Back</button></a>
 
     {% block javascripts %}
         {{ parent() }}
-        {{ encore_entry_script_tags('edit_event') }}
+        {{ encore_entry_script_tags('app_admin_campus') }}
     {% endblock %}
 
 {% endblock %}

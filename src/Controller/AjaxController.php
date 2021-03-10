@@ -38,6 +38,23 @@ class AjaxController extends AbstractController
         }
     }
 
+    #[Route('/ajax/location_data', name: 'location_data')]
+    public function locationData(Request $request, LocationRepository $locationRepository,CityRepository $cityRepository, SerializerInterface $serializer): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $eventData = $request->request->all();
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+            $cityName = $propertyAccessor->getValue($eventData, '[city]');
+            $city = $cityRepository->findOneBy(['name' => $cityName]);
+
+            $location = $locationRepository->findBy(['city' => $city]);
+            $locationJson = $serializer->serialize($location, 'json', ['groups' => ['location']]);
+
+            return new Response($locationJson);
+        }
+    }
+
     #[Route('/ajax/location_event', name: 'ajax_location_event')]
     public function ajaxLocationEvent(Request $request, LocationRepository $locationRepository, SerializerInterface $serializer): Response
     {
@@ -47,7 +64,7 @@ class AjaxController extends AbstractController
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $locId = $propertyAccessor->getValue($eventData, '[locId]');
 
-            $location = $locationRepository->find($locId);
+            $location = $locationRepository->findOneBy(['name' => $locId]);
             $locationJson = $serializer->serialize($location, 'json', ['groups' => ['location']]);
 
             return new Response($locationJson);
