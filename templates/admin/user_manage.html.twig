@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage User{% endblock %}
+
+{% block content %}
+    <h3>Manage Users</h3>
+    <table class="app-main" id="app-user-table">
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        {{ include('templates/_user_table.html.twig') }}
+    </table>
+    <a href="{{ path('home') }}"><button>Back</button></a>
+
+    {% block javascripts %}
+        {{ parent() }}
+        {{ encore_entry_script_tags('app_admin_user') }}
+    {% endblock %}
+
+{% endblock %}

@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,38 +19,56 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function findByMinDate($value)
+    public function filterArchive($value1)
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.date >= :val')
-            ->setParameter('val', $value)
-            /*            ->orderBy('e.id', 'ASC')
-                        ->setMaxResults(10)*/
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('e')
+            ->andWhere('e.date >= :date')
+            ->setParameter('date', $value1);
+
+        $query = $qb->getQuery();
+        return $query->execute();
     }
 
-    public function findByMaxDate($value)
+    public function mainSearch($value1, $value2, $value3, $value4, $value5, $value6, $value7, $value8, $value9, $value10)
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.date <= :val')
-            ->setParameter('val', $value)
-            /*            ->orderBy('e.id', 'ASC')
-                        ->setMaxResults(10)*/
-            ->getQuery()
-            ->getResult();
-    }
+        $qb = $this->createQueryBuilder('e')
+            ->andWhere('e.date >= :date')
+            ->setParameter('date', $value1);
 
-    public function findByDate($value1, $value2)
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.date >= ?1')
-            ->andWhere('e.date <= ?2')
-            ->setParameters(new ArrayCollection([
-                new Parameter('1', $value1),
-                new Parameter('2', $value2)
-            ]))
-            ->getQuery()
-            ->getResult();
+        if ($value2) {
+            $qb->andWhere('e.campus = :campus')
+                ->setParameter('campus', $value2);
+        }
+        if ($value3 !== '') {
+            $qb->andWhere('e.name = :event')
+                ->setParameter('event', $value3);
+        }
+        if ($value4) {
+            $qb->andWhere('e.date >= :dateFrom')
+                ->setParameter('dateFrom', $value4);
+        }
+        if ($value5) {
+            $qb->andWhere('e.limitDate <= :dateTo')
+                ->setParameter('dateTo', $value5);
+        }
+        if ($value6) {
+            $qb->andWhere('e.user = :user')
+                ->setParameter('user', $value6);
+        }
+        if ($value7) {
+            $qb->andWhere('e.name in (:userSub)')
+               ->setParameter('userSub', $value9);
+        }
+        if ($value8) {
+            $qb->andWhere($qb->expr()->notIn('e.name', ':userSub'))
+                ->setParameter('userSub', $value9);
+        }
+        if ($value10) {
+            $qb->andWhere('e.status = :status')
+                ->setParameter('status', $value10);
+        }
+
+        $query = $qb->getQuery();
+        return $query->execute();
     }
 }

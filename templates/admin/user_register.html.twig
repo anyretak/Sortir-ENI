@@ -19,7 +19,7 @@
         {{ form_label(registrationForm.password.second) }} {{ form_widget(registrationForm.password.second) }}
         {{ form_label(registrationForm.campus) }} {{ form_widget(registrationForm.campus) }}
         <button type="submit">Register</button>
-        <a href="{{ path ('home') }}"><button type="button">Cancel</button></a>
+        <a href="{{ path ('admin_user') }}"><button type="button">Cancel</button></a>
         {% do registrationForm.imageFile.setRendered() %}
         {{ form_end(registrationForm) }}
     </div>

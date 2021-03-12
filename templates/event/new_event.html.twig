@@ -11,6 +11,7 @@
     <div class="app-user-profile">
         <h3>Create New Event</h3>
     </div>
+
     <div class="wrapper">
         <div class="app-event">
             {{ form_start(form, { 'attr' : { 'class': 'app-event' } }) }}
@@ -33,22 +34,19 @@
                         {% endfor %}
                     </select></div>
                 <div><label for="selectCity">City:</label></div>
-                <div><select id="selectCity" onchange="updateCity()">
+                <div><select id="selectCity">
                         <option value=""></option>
                         {% for city in city %}
                             <option value="{{ city.name }}">{{ city.name }}</option>
                         {% endfor %}
                     </select></div>
-
                 <div><label for="selectLocation">Location:</label></div>
-                <div><select id="selectLocation" onchange="updateLocation()">
+                <div><select id="selectLocation">
                         <option value=""></option>
                         {% for location in location %}
-                                <option value="{{ location.name }}">{{ location.name }}</option>
+                            <option value="{{ location.name }}">{{ location.name }}</option>
                         {% endfor %}
-                    </select></div>
-
-
+                    </select><a href="{{ path('add_location') }}">New</a></div>
                 <div><label for="updateStreet">Street:</label></div>
                 <div><input id="updateStreet" type="text"/></div>
                 <div><label for="updateCode">Postal Code:</label></div>
@@ -73,8 +71,7 @@
 
     {% block javascripts %}
         {{ parent() }}
-        {{ encore_entry_script_tags('edit_event') }}
-        <script src="{{ asset('edit_event.js') }}"></script>
+        {{ encore_entry_script_tags('app_edit_event') }}
     {% endblock %}
 
 {% endblock %}

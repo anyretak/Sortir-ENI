@@ -11,9 +11,8 @@
     <div class="app-search">
         <div class="app-search-1">
             <div>
-                <label for="searchCampus">Select campus:</label>
-                <select id="searchCampus" onchange="filterCampus()">
-                    <option value=""></option>
+                <label for="app-campus">Select campus:</label>
+                <select id="app-campus">
                     {% for campus in campusList %}
                         <option value="{{ campus.name }}">{{ campus.name }}</option>
                     {% endfor %}
@@ -21,25 +20,26 @@
             </div>
             <div>
                 <label for="app-input">Search by event name:</label>
-                <input type="text" id="app-input" onkeyup="nameSearchFunction()" placeholder="Search by event name...">
+                <input type="text" id="app-input" placeholder="Event name contains...">
             </div>
             <div>
-                <label for="searchFrom">From:</label> <input id="searchFrom" class="searchInput" type="date" placeholder="From" onchange="dateFilter()"/>
-                <label for="searchTo">To:</label> <input id="searchTo" class="searchInput" type="date" placeholder="To" onchange="dateFilter()">
+                <label for="app-date-from">From:</label> <input id="app-date-from" class="searchInput" type="date"/>
+                <label for="app-date-to">To:</label> <input id="app-date-to" class="searchInput" type="date"/>
             </div>
         </div>
         <div class="app-search-2">
-            <input id="_type_1" name="_type_1" class="check" type="checkbox" data-this-user="{{ app.user }}" onchange="filterUser(event)">
+            <input id="_type_1" name="_type_1" class="check app-user-filter" type="checkbox"
+                   data-this-user="{{ app.user }}"/>
             <label for="_type_1">My events</label> <br>
-            <input id="_type_2" name="_type_2" class="check" type="checkbox" onchange="filterSubscribed()">
+            <input id="_type_2" name="_type_2" class="check app-user-sub" type="checkbox"/>
             <label for="_type_2">Events I am currently subscribed to</label> <br>
-            <input id="_type_3" name="_type_3" class="check" type="checkbox" onchange="filterNotSubscribed()">
+            <input id="_type_3" name="_type_3" class="check app-user-nonsub" type="checkbox"/>
             <label for="_type_3">Events I am not subscribed to</label> <br>
-            <input id="_type_4" name="_type_4" class="check" type="checkbox" onchange="filterPassed()">
+            <input id="_type_4" name="_type_4" class="check app-past" type="checkbox"/>
             <label for="_type_4">Past events</label>
         </div>
         <div class="app-search-3">
-            <button id="app-search-bt">SEARCH BUTTON</button>
+            <button id="app-search-bt">SEARCH</button>
         </div>
     </div>
 
@@ -62,7 +62,7 @@
                 <th>Organizer</th>
                 <th>Actions</th>
             </tr>
-                {{ include('templates/_table.html.twig') }}
+            {{ include('templates/_main_table.html.twig') }}
         </table>
     </div>
 
@@ -74,7 +74,7 @@
 
     {% block javascripts %}
         {{ parent() }}
-        {{ encore_entry_script_tags('main_search') }}
+        {{ encore_entry_script_tags('app_main_search') }}
     {% endblock %}
 
 {% endblock %}

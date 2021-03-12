@@ -21,11 +21,12 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
-    .addEntry('main_search', './assets/main_search.js')
-    .addEntry('edit_event', './assets/edit_event.js')
+    .addEntry('app_main_search', './assets/app_main_search.js')
+    .addEntry('app_edit_event', './assets/app_edit_event.js')
     .addEntry('app_admin_city', './assets/app_admin_city.js')
     .addEntry('app_admin_campus', './assets/app_admin_campus.js')
     .addEntry('app_admin_user', './assets/app_admin_user.js')
+    .addEntry('app_cancel_event', './assets/app_cancel_event.js')
 
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

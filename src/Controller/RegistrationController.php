@@ -13,7 +13,7 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/modify', name: 'modify_user')]
+    #[Route('/modify_user', name: 'modify_user')]
     public function modify(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $user = $this->getUser();
@@ -32,7 +32,6 @@ class RegistrationController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-            // do anything else you need here, like send an email
 
             $this->addFlash(
                 'notice',
@@ -50,10 +49,8 @@ class RegistrationController extends AbstractController
     public function userProfile($user, UserRepository $userRepository, UploaderHelper $helper): Response
     {
         $userDetails = $userRepository->findBy(['name' => $user]);
-
         return $this->render('registration/user_profile.html.twig', [
             'userDetails' => $userDetails,
-
         ]);
     }
 }

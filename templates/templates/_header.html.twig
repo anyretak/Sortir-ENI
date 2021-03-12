@@ -5,7 +5,7 @@
         {% if  is_granted('ROLE_ADMIN') %}
         <a class="nav" href="{{ path('admin_city') }}">Edit City</a>
         <a class="nav" href="{{ path('admin_campus') }}">Edit Campus</a>
-        <a class="nav" href="{{ path('user_admin') }}">User Administration</a>
+        <a class="nav" href="{{ path('admin_user') }}">User Administration</a>
         {% endif %}
         <a class="nav" href="{{ path('home') }}">Home</a>
         <a class="nav" href="{{ path('modify_user') }}">Modify Profile</a>

@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Subscription;
 use App\Repository\CampusRepository;
 use App\Repository\EventRepository;
 use App\Repository\StatusRepository;
+use App\Repository\SubscriptionRepository;
+use App\Repository\UserRepository;
 use DateInterval;
 use DateTime;
-use DateTimeZone;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,18 +17,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
+    //******************************************************************//
+    //**************************MAIN PAGE LOAD**************************//
+    //******************************************************************//
     #[Route('/', name: 'home')]
-    public function index(Request $request, EventRepository $eventRepository, CampusRepository $campusRepository, StatusRepository $statusRepository): Response
+    public function index(EventRepository $eventRepository, CampusRepository $campusRepository, StatusRepository $statusRepository, $eventList = []): Response
     {
-        $listEvents = $eventRepository->findAll();
+        $date = new DateTime();
+        $date->getTimestamp();
+        $archiveDate = clone $date;
+        $archiveDate->sub(new DateInterval('P1M'));
+        $listEvents = $eventRepository->filterArchive($archiveDate);
         $campusList = $campusRepository->findAll();
         $stateClosed = $statusRepository->findOneBy(['state' => 'Closed']);
         $stateFinished = $statusRepository->findOneBy(['state' => 'Finished']);
         $stateActive = $statusRepository->findOneBy(['state' => 'Active']);
-        $date = new DateTime();
-        /*$date = new DateTime('now', new DateTimeZone('Europe/Paris'));*/
-        $date->getTimestamp();
-        dump($date);
 
         foreach ($listEvents as $event) {
             $eventStatus = $event->getStatus()->getState();
@@ -34,9 +39,7 @@ class HomeController extends AbstractController
             $eventDuration = clone $eventDate;
             $eventLimitDate = $event->getLimitDate();
             $timeInterval = $event->getDuration();
-            $interval = new DateInterval('PT0H' . $timeInterval . 'M');
-            $eventDuration->add($interval);
-
+            $eventDuration->add(new DateInterval('PT0H' . $timeInterval . 'M'));
             if ($eventStatus !== 'Cancelled') {
                 if ($eventLimitDate > $date and $eventDate > $date) {
                     ;
@@ -61,5 +64,81 @@ class HomeController extends AbstractController
             'campusList' => $campusList,
         ]);
     }
-}
 
+    //******************************************************************//
+    //**************************MAIN PAGE FILTER************************//
+    //******************************************************************//
+    #[Route('/api/main_filter', name: 'api_main_filter')]
+    public function ajaxDateFilter(Request $request, EventRepository $eventRepository, CampusRepository $campusRepository, StatusRepository $statusRepository, SubscriptionRepository $subscriptionRepository, $userSubs = []): Response
+    {
+        $date = new DateTime();
+        $date->getTimestamp();
+        $date->sub(new DateInterval('P1M'));
+
+        $data = $request->toArray();
+        $campus = $data['campus'];
+        $event = $data['text'];
+        $dateFrom = $data['dateFrom'];
+        $dateTo = $data['dateTo'];
+        $user = $data['user'];
+        $userSub = $data['userSub'];
+        $userNonsub = $data['userNonsub'];
+        $status = $data['past'];
+
+        $campus = $campusRepository->findBy(['name' => $campus]);
+        if ($user) {
+            $user = $this->getUser();
+        }
+        if ($status) {
+            $status = $statusRepository->findBy(['state' => 'Finished']);
+        }
+        if ($userSub || $userNonsub) {
+            $userName = $this->getUser();
+            $userSubList = $subscriptionRepository->findBy(['user' => $userName]);
+            foreach ($userSubList as $sub) {
+                $sub = $sub->getEvent()->getName();
+                $userSubs [] = $sub;
+            }
+        }
+        $listEvents = $eventRepository->mainSearch($date, $campus, $event, $dateFrom, $dateTo, $user, $userSub, $userNonsub, $userSubs, $status);
+        return new Response($this->renderView('templates/_main_table.html.twig', [
+            'eventList' => $listEvents,
+        ]));
+    }
+
+    //******************************************************************//
+    //*************************USER SUBSCRIPTION************************//
+    //******************************************************************//
+    #[Route('/api/user_sub', name: 'api_user_sub')]
+    public function ajaxUserSub(Request $request, UserRepository $userRepository, EventRepository $eventRepository, SubscriptionRepository $subscriptionRepository): Response
+    {
+        $data = $request->toArray();
+        $user = $data['user'];
+        $event = $data['event'];
+        $user = $userRepository->findOneBy(['name' => $user]);
+        $event = $eventRepository->findOneBy(['name' => $event]);
+        $subscription = $subscriptionRepository->findOneBy(['user' => $user, 'event' => $event]);
+
+        if (is_null($subscription)) {
+            $subscription = new Subscription();
+            $date = new DateTime();
+            $date->getTimestamp();
+            $subscription->setDate($date);
+            $subscription->setUser($user);
+            $subscription->setEvent($event);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($subscription);
+            $entityManager->flush();
+        } else {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($subscription);
+            $entityManager->flush();
+        }
+
+        $listEvents = $eventRepository->findAll();
+        return new Response($this->renderView('templates/_main_table.html.twig', [
+            'eventList' => $listEvents,
+        ]));
+    }
+}

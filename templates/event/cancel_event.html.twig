@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Delete Event{% endblock %}
+{% block title %}Cancel Event{% endblock %}
 
 {% block content %}
 
@@ -9,6 +9,7 @@
             {{ message }}
         </div>
     {% endfor %}
+    <p id="app-flash-message"></p>
 
     <div class="app-user-profile">
         <h3>Cancel event</h3>
@@ -34,17 +35,15 @@
         </div>
     </div>
     <div class="app-user-profile">
-        <a href="{{ path ('cancel_event', {'event': event.name}) }}">
-            <button class="app-event-bt" type="button" onclick="cancelEvent()">Submit</button>
-        </a>
-        <a href="{{ path ('home') }}">
+        <button class="app-event-bt" id="app-cancel-event" type="button">Submit</button>
+        <a href="{{ path ('event_details', {'event': event.name}) }}">
             <button class="app-event-bt" type="button">Back</button>
         </a>
     </div>
 
     {% block javascripts %}
         {{ parent() }}
-        {{ encore_entry_script_tags('edit_event') }}
+        {{ encore_entry_script_tags('app_cancel_event') }}
     {% endblock %}
 
 {% endblock %}

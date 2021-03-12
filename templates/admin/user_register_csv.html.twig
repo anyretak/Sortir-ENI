@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+    <h3>Register a group of users:</h3>
+    <div>
+        <label for="app-csv-link">Please enter the path to your csv file:<input id="app-csv-link"/></label>
+    </div>
+    <div>
+        <a href="{{ path('csv_upload') }}"><button class="nav-user-admin">Register with CSV</button></a>
+    </div>
+
+{% endblock %}

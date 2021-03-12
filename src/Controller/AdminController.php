@@ -12,11 +12,8 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use League\Csv\Reader;
 
 class AdminController extends AbstractController
@@ -47,9 +44,6 @@ class AdminController extends AbstractController
         $entityManager->persist($newCity);
         $entityManager->flush();
 
-        /*$cityList = $cityRepository->findAll();
-        $cityListJson = $serializer->serialize($cityList, 'json', ['groups' => ['city']]);
-        return new JsonResponse($cityListJson, Response::HTTP_OK, [], true);*/
         return new Response();
     }
 
@@ -111,17 +105,17 @@ class AdminController extends AbstractController
     //******************************************************************//
     //****************************MANAGE USERS**************************//
     //******************************************************************//
-    #[Route('/admin/user_admin', name: 'user_admin')]
+    #[Route('/admin/admin_user', name: 'admin_user')]
     public function userAdmin(): Response
     {
-        return $this->render('admin/user_admin.html.twig');
+        return $this->render('admin/admin_user.html.twig');
     }
 
-    #[Route('/admin/admin_user', name: 'admin_user')]
+    #[Route('/admin/user_manage', name: 'user_manage')]
     public function userManage(UserRepository $userRepository): Response
     {
         $userList = $userRepository->findAll();
-        return $this->render('admin/admin_user.html.twig', [
+        return $this->render('admin/user_manage.html.twig', [
             'userList' => $userList,
         ]);
     }
@@ -174,7 +168,6 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $user,
@@ -188,10 +181,10 @@ class AdminController extends AbstractController
 
             $this->addFlash(
                 'notice',
-                'New user registered',
+                'New user successfully registered!',
             );
 
-            return $this->render('admin/user_admin.html.twig');
+            return $this->render('admin/admin_user.html.twig');
         }
 
         return $this->render('admin/user_register.html.twig', [
@@ -199,18 +192,18 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/user_csv', name: 'user_csv')]
+    #[Route('/admin/user_register_csv', name: 'user_register_csv')]
     public function userCSV(): Response
     {
-        return $this->render('admin/user_csv.html.twig');
+        return $this->render('admin/user_register_csv.html.twig');
     }
 
-    #[Route('/admin/user_csv_upload', name: 'user_csv_upload')]
+    #[Route('/admin/csv_upload', name: 'csv_upload')]
     public function userCSVUpload(UserPasswordEncoderInterface $passwordEncoder, CampusRepository $campusRepository): Response
     {
         $csv = Reader::createFromPath('C:\Users\Kat\Downloads\user.csv', 'r');
         $csv->setHeaderOffset(0);
-        $header = $csv->getHeader(); //returns ['First Name', 'Last Name', 'E-mail', etc]
+        /*$header = $csv->getHeader();*/
 
         $records = $csv->getRecords();
         foreach ($records as $offset => $record) {
@@ -232,11 +225,12 @@ class AdminController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
         }
+
         $this->addFlash(
             'notice',
-            'User group registered',
+            'User group registered successfully!',
         );
 
-        return $this->render('admin/user_admin.html.twig');
+        return $this->render('admin/admin_user.html.twig');
     }
 }

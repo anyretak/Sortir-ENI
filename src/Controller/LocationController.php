@@ -13,20 +13,17 @@ class LocationController extends AbstractController
     #[Route('/add_location', name: 'add_location')]
     public function index(Request $request): Response
     {
-        $form = $this ->createForm(LocationType::class);
+        $form = $this->createForm(LocationType::class);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $task = $form->getData();
-
+            $location = $form->getData();
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($task);
+            $entityManager->persist($location);
             $entityManager->flush();
 
             $this->addFlash(
                 'notice',
-                'Success! New location wad added.'
+                'Success! New location was added.'
             );
 
             return $this->redirectToRoute('event');

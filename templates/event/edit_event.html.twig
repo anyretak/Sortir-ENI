@@ -19,14 +19,17 @@
             </div>
             <div class='app-event-s2'>
                 {{ form_label(form.campus) }} {{ form_widget(form.campus) }}
-                {{ form_label(form.location) }} {{ form_widget(form.location) }}
+                {{ form_label(form.location) }}
+                <div>{{ form_widget(form.location) }}
+                    {# <a href="{{ path('add_location') }}">New</a> #}
+                </div>
                 <div><label for="updateStreet">Street:</label></div>
                 <div><input id="updateStreet" type="text" value="{{ location.street }}"/></div>
                 <div><label for="updateCode">Postal Code:</label></div>
                 <div><input id="updateCode" type="text" value="{{ city.code }}"/></div>
                 <div><label for="updateLat">Latitude:</label></div>
                 <div><input type="number" id="updateLat" value="{{ location.latitude }}"/></div>
-                <div><label for="updateLat">Longitude:</label></div>
+                <div><label for="updateLong">Longitude:</label></div>
                 <div><input type="number" id="updateLong" value="{{ location.longitude }}"/></div>
             </div>
             <div class='app-event-s3'>
