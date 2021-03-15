@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+    {% block header %}
+        {{ include('templates/_header_mobile.html.twig') }}
+    {% endblock %}
+
+{% block content %}
+    <h3>Events on my campus :</h3>
+    <div>
+        <table id="app-main-table" class="app-main">
+            <tr>
+                <th>Event</th>
+                <th>Event Date&Time</th>
+                <th>Location</th>
+            </tr>
+            {% for item in eventList %}
+                <tr>
+                    <td><a href="{{ path('event_details', {'event': item.name}) }}">{{ item.name }}</a></td>
+                    <td>{{ item.date | date('d-m-Y H:i:s') }}</td>
+                    <td>{{ item.location | upper }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

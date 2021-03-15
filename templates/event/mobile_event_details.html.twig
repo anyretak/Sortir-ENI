@@ -2,70 +2,83 @@
 
 {% block title %}Event Details{% endblock %}
 
+    {% block header %}
+        {{ include('templates/_header_mobile.html.twig') }}
+    {% endblock %}
+
 {% block content %}
-    <div class="app-user-profile">
         <h3>Event Details</h3>
-    </div>
     <div class="wrapper">
         <table class="app-event-details">
             <tr>
                 <td>Event Name :</td>
                 <td>{{ (eventDetails.name) }}</td>
-                <td> Campus:</td>
-                <td>{{ (eventDetails.campus) }}</td>
             </tr>
             <tr>
                 <td>Event Date :</td>
                 <td>{{ (eventDetails.date | date('d-m-Y H:i:s')) }}</td>
+            </tr>
+            <tr>
+                <td> City :</td>
+                <td> {{ locationDetails.city }}</td>
+            </tr>
+            <tr>
                 <td> Location :</td>
                 <td>{{ (eventDetails.location) }}</td>
             </tr>
             <tr>
-                <td> Subscription due date :</td>
-                <td> {{ (eventDetails.limitDate | date('d-m-Y')) }}</td>
                 <td> Street :</td>
                 <td> {{ (locationDetails.street) }}</td>
             </tr>
             <tr>
-                <td> Number of places :</td>
-                <td> {{ (eventDetails.spots) }}</td>
                 <td> Postal code :</td>
-                <td> {{ cityDetails.code }}</td>
+                <td> {{ (cityDetails.code) }}</td>
             </tr>
             <tr>
-                <td> Duration :</td>
-                <td>{{ (eventDetails.duration) }}</td>
                 <td> Latitude :</td>
                 <td> {{ locationDetails.latitude }}</td>
             </tr>
             <tr>
-                <td> Description:</td>
-                <td> {{ (eventDetails.description) }}</td>
                 <td> Longitude :</td>
                 <td> {{ locationDetails.longitude }}</td>
             </tr>
+            <tr>
+                <td> Subscription date :</td>
+                <td> {{ (eventDetails.limitDate | date('d-m-Y')) }}</td>
+            </tr>
+            <tr>
+                <td> Number of places :</td>
+                <td> {{ (eventDetails.spots) }}</td>
+            </tr>
+            <tr>
+                <td> Duration :</td>
+                <td>{{ (eventDetails.duration) }}</td>
+            </tr>
+
+            <tr>
+                <td> Description:</td>
+                <td> {{ (eventDetails.description) }}</td>
+            </tr>
+
         </table>
     </div>
-    <p>List of registered users: </p>
-    <table class="app-main" id="app-event-users">
+    <div id="mobile-event-details">
+    <h3>List of registered users: </h3>
+    <table class="app-main" id="app-mobile-table">
         <tr>
-            <th>Username</th>
             <th>Name</th>
+            <th>City</th>
         </tr>
 
         {% for item in userDetails %}
             <tr>
-                <td><a href="{{ path('user_profile', {'user': item.name}) }}">{{ item.username }}</a></td>
                 <td>{{ item.name }} {{ item.lastName }}</td>
+                <td>{{ item.campus }}</td>
             </tr>
         {% endfor %}
     </table>
     <a href="{{ path('home') }}">
         <button>Back</button>
     </a>
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path ('cancel_event', {'event':  eventDetails.name }) }}">
-            <button class="app-event-bt" type="button">Cancel Event</button>
-        </a>
-    {% endif %}
+    </div>
 {% endblock %}

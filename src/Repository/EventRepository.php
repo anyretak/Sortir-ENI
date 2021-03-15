@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 
 /**
  * @method Event|null find($id, $lockMode = null, $lockVersion = null)
@@ -29,6 +31,19 @@ class EventRepository extends ServiceEntityRepository
         return $query->execute();
     }
 
+    public function filterMobile($value1, $value2)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->andWhere('e.date >= :date')
+            ->andWhere('e.campus = :campus')
+            ->setParameters(new ArrayCollection([
+                new Parameter('date', $value1),
+                new Parameter('campus', $value2)
+            ]));
+        $query = $qb->getQuery();
+        return $query->execute();
+    }
+
     public function mainSearch($value1, $value2, $value3, $value4, $value5, $value6, $value7, $value8, $value9, $value10)
     {
         $qb = $this->createQueryBuilder('e')
@@ -40,8 +55,8 @@ class EventRepository extends ServiceEntityRepository
                 ->setParameter('campus', $value2);
         }
         if ($value3 !== '') {
-            $qb->andWhere('e.name = :event')
-                ->setParameter('event', $value3);
+            $qb->andWhere('e.name like :event')
+                ->setParameter('event', '%'.$value3.'%');
         }
         if ($value4) {
             $qb->andWhere('e.date >= :dateFrom')

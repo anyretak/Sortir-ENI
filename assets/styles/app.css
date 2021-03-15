@@ -1,3 +1,17 @@
+@media (max-width: 600px) {
+    body {
+        font-size: 12px;
+    }
+
+    table#app-mobile-table {
+        width: 100%;
+    }
+
+    a {
+        float: left;
+    }
+}
+
 /* GENERAL & LAYOUT */
 body {
     background-color: #7DC2AF;
@@ -9,6 +23,7 @@ body {
 div.content {
     padding: 1em;
 }
+
 
 span.app-nav:hover {
     cursor: pointer;
@@ -38,12 +53,12 @@ button.nav-user-admin {
 }
 
 td.user-1 {
-color:black;
+    color: black;
 }
 
 td.user-,
 span.user- {
-    color:darkred;
+    color: darkred;
 }
 
 /* HEADER */
@@ -267,6 +282,7 @@ div.app-profile {
 div.extra-long {
     width: 400px;
 }
+
 img.app-profile {
     display: block;
     margin-left: auto;
@@ -329,4 +345,6 @@ button#app-search-bt {
     height: 75px;
     width: 200px;
 }
+
+
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use app\Entity\User;
 use App\Entity\Subscription;
 use App\Repository\CampusRepository;
 use App\Repository\EventRepository;
@@ -10,6 +11,7 @@ use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
 use DateInterval;
 use DateTime;
+use Mobile_Detect;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +25,24 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home')]
     public function index(EventRepository $eventRepository, CampusRepository $campusRepository, StatusRepository $statusRepository, $eventList = []): Response
     {
+        $detect = new Mobile_Detect;
+        if ($detect->isMobile() && !$detect->isTablet()) {
+
+            $date = new DateTime();
+            $date->getTimestamp();
+            $archiveDate = clone $date;
+            $archiveDate->sub(new DateInterval('P1M'));
+
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+            $campus = $user->getCampus();
+            $listEvents = $eventRepository->filterMobile($archiveDate, $campus);
+
+            return $this->render('home/home_mobile.html.twig', [
+                'eventList' => $listEvents,
+            ]);
+        }
+
         $date = new DateTime();
         $date->getTimestamp();
         $archiveDate = clone $date;

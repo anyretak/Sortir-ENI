@@ -13,10 +13,7 @@
             {% endif %}
         </td>
         <td><a href="{{ path('user_profile', {'user': item.user}) }}">{{ item.user }}</a></td>
-        <td>{% set archived = 'now'|date_modify("-30 day") %}
-            {% if item.date > archived %}
-                <a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
-            {% endif %}
+        <td><a href="{{ path('event_details', {'event': item.name}) }}">Details</a>
             {% if item.user != app.user and (item.status == 'Open' or item.status == 'Closed') %}
                 {% if app.user.name in item.subscriptions.values %}
                     <span id="userSub" class="app-nav" data-user-sub="{{ app.user }}" data-event-sub="{{ item.name }}"
@@ -28,7 +25,7 @@
                     </span>
                 {% endif %}
             {% endif %}
-            {% if (item.user == app.user or is_granted('ROLE_ADMIN')) and item.status != 'Active' and item.date > archived %}
+            {% if item.user == app.user and item.status != 'Active'%}
                 <a href="{{ path('edit_event', {'event': item.name}) }}">Edit</a>
             {% endif %}
         </td>

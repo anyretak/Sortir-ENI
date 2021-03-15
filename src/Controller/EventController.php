@@ -10,6 +10,7 @@ use App\Repository\LocationRepository;
 use App\Repository\StatusRepository;
 use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
+use Mobile_Detect;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +25,6 @@ class EventController extends AbstractController
     //******************************************************************//
     //****************************NEW EVENT*****************************//
     //******************************************************************//
-
-    public action
     #[Route('/new_event', name: 'event')]
     public function newEvent(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, CityRepository $cityRepository, CampusRepository $campusRepository, LocationRepository $locationRepository): Response
     {
@@ -116,14 +115,26 @@ class EventController extends AbstractController
     {
         $eventDetails = $eventRepository->findOneBy(['name' => $event]);
         $locationDetails = $eventDetails->getLocation();
+        $cityDetails = $eventDetails->getLocation()->getCity();
         $subscriptionDetails = $eventDetails->getSubscriptions();
         foreach ($subscriptionDetails as $detail) {
             $user = $detail->getUser();
             $userDetails[] = $user;
         }
+
+        $detect = new Mobile_Detect;
+        if ($detect->isMobile() && !$detect->isTablet()) {
+            return $this->render('event/mobile_event_details.html.twig', [
+                'eventDetails' => $eventDetails,
+                'locationDetails' => $locationDetails,
+                'cityDetails' => $cityDetails,
+                'userDetails' => $userDetails,
+            ]);
+        }
         return $this->render('event/event_details.html.twig', [
             'eventDetails' => $eventDetails,
             'locationDetails' => $locationDetails,
+            'cityDetails' => $cityDetails,
             'userDetails' => $userDetails,
         ]);
     }

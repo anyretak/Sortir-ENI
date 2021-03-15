@@ -10,6 +10,7 @@ use App\Repository\CampusRepository;
 use App\Repository\CityRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -199,10 +200,13 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/csv_upload', name: 'csv_upload')]
-    public function userCSVUpload(UserPasswordEncoderInterface $passwordEncoder, CampusRepository $campusRepository): Response
+    public function userCSVUpload(Request $request, UserPasswordEncoderInterface $passwordEncoder, CampusRepository $campusRepository): Response
     {
-        $csv = Reader::createFromPath('C:\Users\Kat\Downloads\user.csv', 'r');
+        $data = $request -> toArray();
+        $link = $data['link'];
+        $csv = Reader::createFromPath($link, 'r');
         $csv->setHeaderOffset(0);
+        /*$csv = Reader::createFromPath('C:\Users\Kat\Downloads\user.csv', 'r');*/
         /*$header = $csv->getHeader();*/
 
         $records = $csv->getRecords();
@@ -226,11 +230,6 @@ class AdminController extends AbstractController
             $entityManager->flush();
         }
 
-        $this->addFlash(
-            'notice',
-            'User group registered successfully!',
-        );
-
-        return $this->render('admin/admin_user.html.twig');
+        return new JsonResponse();
     }
 }
