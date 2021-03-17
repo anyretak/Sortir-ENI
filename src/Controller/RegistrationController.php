@@ -39,6 +39,9 @@ class RegistrationController extends AbstractController
             );
         }
 
+        //refresh user (but better to make DTO)
+        $this->getDoctrine()->getManager()->refresh($user);
+
         return $this->render('registration/modify_user.html.twig', [
             'registrationForm' => $form->createView(),
             'user' => $user,

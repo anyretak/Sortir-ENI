@@ -19,7 +19,7 @@
                     <span id="userSub" class="app-nav" data-user-sub="{{ app.user }}" data-event-sub="{{ item.name }}"
                     >Unsubscribe
                     </span>
-                {% elseif item.limitDate > date() and item.status != 'Closed' %}
+                {% elseif item.limitDate > date() and item.status != 'Closed' and (item.spots - item.subscriptions|length) %}
                     <span id="userSub" class="app-nav" data-user-sub="{{ app.user }}" data-event-sub="{{ item.name }}"
                     >Subscribe
                     </span>

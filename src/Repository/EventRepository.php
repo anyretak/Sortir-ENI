@@ -2,7 +2,10 @@
 
 namespace App\Repository;
 
+use App\Classes\Filters;
+use App\Entity\Campus;
 use App\Entity\Event;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,68 +24,65 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function filterArchive($value1)
+    public function filterArchive(DateTimeInterface $dateArchive)
     {
         $qb = $this->createQueryBuilder('e')
             ->andWhere('e.date >= :date')
-            ->setParameter('date', $value1);
-
+            ->setParameter('date', $dateArchive);
         $query = $qb->getQuery();
         return $query->execute();
     }
 
-    public function filterMobile($value1, $value2)
+    public function filterMobile(DateTimeInterface $dateArchive, Campus $campus)
     {
         $qb = $this->createQueryBuilder('e')
             ->andWhere('e.date >= :date')
             ->andWhere('e.campus = :campus')
             ->setParameters(new ArrayCollection([
-                new Parameter('date', $value1),
-                new Parameter('campus', $value2)
+                new Parameter('date', $dateArchive),
+                new Parameter('campus', $campus)
             ]));
         $query = $qb->getQuery();
         return $query->execute();
     }
 
-    public function mainSearch($value1, $value2, $value3, $value4, $value5, $value6, $value7, $value8, $value9, $value10)
+    public function mainSearch(DateTimeInterface $dateArchive, Filters $filters)
     {
         $qb = $this->createQueryBuilder('e')
             ->andWhere('e.date >= :date')
-            ->setParameter('date', $value1);
-
-        if ($value2) {
+            ->setParameter('date', $dateArchive);
+        if ($filters->getCampus()) {
             $qb->andWhere('e.campus = :campus')
-                ->setParameter('campus', $value2);
+                ->setParameter('campus', $filters->getCampus());
         }
-        if ($value3 !== '') {
+        if ($filters->getEvent()) {
             $qb->andWhere('e.name like :event')
-                ->setParameter('event', '%'.$value3.'%');
+                ->setParameter('event', '%' . $filters->getEvent() . '%');
         }
-        if ($value4) {
+        if ($filters->getDateFrom()) {
             $qb->andWhere('e.date >= :dateFrom')
-                ->setParameter('dateFrom', $value4);
+                ->setParameter('dateFrom', $filters->getDateFrom());
         }
-        if ($value5) {
+        if ($filters->getDateTo()) {
             $qb->andWhere('e.limitDate <= :dateTo')
-                ->setParameter('dateTo', $value5);
+                ->setParameter('dateTo', $filters->getDateTo());
         }
-        if ($value6) {
+        if ($filters->getUser()) {
             $qb->andWhere('e.user = :user')
-                ->setParameter('user', $value6);
+                ->setParameter('user', $filters->getUser());
         }
-        if ($value7) {
+        if ($filters->getUserSub()) {
             $qb->andWhere('e.name in (:userSub)')
-               ->setParameter('userSub', $value9);
+                ->setParameter('userSub', $filters->getEventNames());
         }
-        if ($value8) {
+        if ($filters->getUserNonsub()) {
             $qb->andWhere($qb->expr()->notIn('e.name', ':userSub'))
-                ->setParameter('userSub', $value9);
+                ->setParameter('userSub', $filters->getEventNames());
         }
-        if ($value10) {
+        if ($filters->getPast()) {
             $qb->andWhere('e.status = :status')
-                ->setParameter('status', $value10);
+                ->setParameter('status', $filters->getStatus());
         }
-
         $query = $qb->getQuery();
         return $query->execute();
     }

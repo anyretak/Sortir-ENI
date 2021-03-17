@@ -1,6 +1,6 @@
 document.querySelector('#app-search-bt').addEventListener('click', () => {
     const campus = document.querySelector('#app-campus').value;
-    const text = document.querySelector('#app-input').value;
+    const event = document.querySelector('#app-input').value;
     const dateFrom = document.querySelector('#app-date-from').value;
     const dateTo = document.querySelector('#app-date-to').value;
     const user = document.querySelector('.app-user-filter').checked;
@@ -10,16 +10,14 @@ document.querySelector('#app-search-bt').addEventListener('click', () => {
     let tableMain = document.querySelector('#app-main-table');
     let tableFill = tableMain.firstElementChild.nextSibling;
 
-    console.log(campus);
-
     fetch('http://localhost/sortir-eni/public/api/main_filter', {
         method: 'POST',
         body: JSON.stringify({
-            'campus': campus,
-            'text': text,
+            'campusName': campus,
+            'event': event,
             'dateFrom': dateFrom,
             'dateTo': dateTo,
-            'user': user,
+            'userName': user,
             'userSub': userSub,
             'userNonsub': userNonsub,
             'past': past,
