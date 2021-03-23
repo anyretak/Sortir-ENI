@@ -12,19 +12,17 @@
     <p id="app-flash-message"></p>
 
     <h3>Register a group of users:</h3>
-    <div>
-        <label for="app-csv-link">Please enter the path to your csv file:<input id="app-csv-link"/></label>
-    </div>
-    <div>
-        <button class="nav-user-admin" id="app-csv-submit">Register with CSV</button>
-        <a href="{{ path ('admin_user') }}">
-            <button type="button">Cancel</button>
-        </a>
-    </div>
-
-    {% block javascripts %}
-        {{ parent() }}
-        {{ encore_entry_script_tags('app_csv_upload') }}
-    {% endblock %}
+    <form method="POST" action="{{ path('csv_upload') }}" enctype="multipart/form-data">
+        <div>
+            <label for="app-csv">User details file (csv):</label>
+            <input id="app-csv" type="file" name="csv">
+        </div>
+        <div>
+            <button type="submit" class="nav-user-admin">Register with CSV</button>
+            <a href="{{ path ('admin_user') }}">
+                <button type="button">Cancel</button>
+            </a>
+        </div>
+    </form>
 
 {% endblock %}

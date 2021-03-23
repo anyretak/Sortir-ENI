@@ -8,8 +8,8 @@ use App\Repository\CityRepository;
 use App\Repository\EventRepository;
 use App\Repository\LocationRepository;
 use App\Repository\StatusRepository;
-use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
+use App\Service\ProcessCancelEvent;
 use Mobile_Detect;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,14 +17,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use function Symfony\Component\String\u;
-
 
 class EventController extends AbstractController
 {
-    //******************************************************************//
     //****************************NEW EVENT*****************************//
-    //******************************************************************//
     #[Route('/new_event', name: 'event')]
     public function newEvent(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, CityRepository $cityRepository, CampusRepository $campusRepository, LocationRepository $locationRepository): Response
     {
@@ -107,15 +103,13 @@ class EventController extends AbstractController
         return new JsonResponse($locationJson, Response::HTTP_OK, [], true);
     }
 
-    //******************************************************************//
     //*************************EVENT MANAGEMENT*************************//
-    //******************************************************************//
     #[Route('/event_details/{event}', name: 'event_details')]
     public function eventDetails($event, EventRepository $eventRepository, $userDetails = [])
     {
         $eventDetails = $eventRepository->findOneBy(['name' => $event]);
         $locationDetails = $eventDetails->getLocation();
-        $cityDetails = $eventDetails->getLocation()->getCity();
+        $cityDetails = $locationDetails->getCity();
         $subscriptionDetails = $eventDetails->getSubscriptions();
         foreach ($subscriptionDetails as $detail) {
             $user = $detail->getUser();
@@ -181,16 +175,13 @@ class EventController extends AbstractController
         ]);
     }
 
-    //******************************************************************//
     //**************************CANCEL EVENT****************************//
-    //******************************************************************//
     #[Route('/cancel_event/{event}', name: 'cancel_event')]
     public function cancelEvent($event, EventRepository $eventRepository): Response
     {
         $event = $eventRepository->findOneBy(['name' => $event]);
         $location = $event->getLocation();
         $city = $location->getCity();
-
         return $this->render('event/cancel_event.html.twig', [
             'event' => $event,
             'location' => $location,
@@ -199,29 +190,10 @@ class EventController extends AbstractController
     }
 
     #[Route('/api/cancel_event', name: 'api_cancel_event')]
-    public function ajaxCancelEvent(Request $request, EventRepository $eventRepository, StatusRepository $statusRepository, SubscriptionRepository $subscriptionRepository): Response
+    public function ajaxCancelEvent(Request $request, ProcessCancelEvent $processCancelEvent): Response
     {
         $data = $request->toArray();
-        $reason = $data['reason'];
-        $event = $data['event'];
-
-        $cancelReason = u(': ')->join(["Event has been cancelled due to the following reasons", $reason]);
-        $event = $eventRepository->findOneBy(['name' => $event]);
-        $state = $statusRepository->findOneBy(['state' => 'Cancelled']);
-
-        $event->setStatus($state);
-        $event->setDescription($cancelReason);
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $subscriptionList = $subscriptionRepository->findBy(['event' => $event]);
-        foreach ($subscriptionList as $subscription) {
-            $entityManager->remove($subscription);
-            $entityManager->flush();
-        }
-
-        $entityManager->persist($event);
-        $entityManager->flush();
-
+        $processCancelEvent->cancelEvent($data);
         return new Response();
     }
 }

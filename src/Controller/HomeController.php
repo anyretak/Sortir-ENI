@@ -6,9 +6,6 @@ use App\Classes\Filters;
 use App\Service\ProcessFilters;
 use App\Repository\CampusRepository;
 use App\Repository\EventRepository;
-use App\Repository\StatusRepository;
-use App\Repository\SubscriptionRepository;
-use App\Repository\UserRepository;
 use App\Service\ProcessHome;
 use App\Service\ProcessSub;
 use Mobile_Detect;
@@ -41,11 +38,11 @@ class HomeController extends AbstractController
 
     //**************************MAIN PAGE FILTER************************//
     #[Route('/api/main_filter', name: 'api_main_filter')]
-    public function ajaxDateFilter(Request $request, SerializerInterface $serializer, EventRepository $eventRepository, ProcessFilters $processFilters, CampusRepository $campusRepository, StatusRepository $statusRepository, SubscriptionRepository $subscriptionRepository): Response
+    public function ajaxDateFilter(Request $request, SerializerInterface $serializer, EventRepository $eventRepository, ProcessFilters $processFilters): Response
     {
         $data = $request->getContent();
         $filters = $serializer->deserialize($data, Filters::class, 'json', ['groups' => 'filters']);
-        $filters = $processFilters->processFilters($filters, $campusRepository, $statusRepository, $subscriptionRepository, $userSubs = []);
+        $filters = $processFilters->processFilters($filters, $userSubs = []);
         $date = $processFilters->archiveDate();
         $listEvents = $eventRepository->mainSearch($date, $filters);
         return new Response($this->renderView('templates/_main_table.html.twig', [
@@ -55,11 +52,11 @@ class HomeController extends AbstractController
 
     //*************************USER SUBSCRIPTION************************//
     #[Route('/api/user_sub', name: 'api_user_sub')]
-    public function ajaxUserSub(Request $request, ProcessFilters $processFilters, ProcessSub $processSub, UserRepository $userRepository, EventRepository $eventRepository, SubscriptionRepository $subscriptionRepository): Response
+    public function ajaxUserSub(Request $request, ProcessFilters $processFilters, ProcessSub $processSub, EventRepository $eventRepository): Response
     {
         $data = $request->toArray();
         $date = $processFilters->archiveDate();
-        $processSub->processSub($data, $userRepository, $eventRepository, $subscriptionRepository);
+        $processSub->processSub($data);
         $listEvents = $eventRepository->filterArchive($date);
         return new Response($this->renderView('templates/_main_table.html.twig', [
             'eventList' => $listEvents,

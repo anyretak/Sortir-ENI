@@ -27,7 +27,6 @@ Encore
     .addEntry('app_admin_campus', './assets/app_admin_campus.js')
     .addEntry('app_admin_user', './assets/app_admin_user.js')
     .addEntry('app_cancel_event', './assets/app_cancel_event.js')
-    .addEntry('app_csv_upload', './assets/app_csv_upload.js')
 
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

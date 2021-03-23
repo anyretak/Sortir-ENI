@@ -2,14 +2,15 @@
 
 namespace App\Service;
 
-use App\Repository\CampusRepository;
-use App\Repository\StatusRepository;
-use App\Repository\SubscriptionRepository;
+use App\Entity\Campus;
+use App\Entity\Status;
+use App\Entity\Subscription;
 use DateInterval;
 use DateTime;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Security;
 
-class ProcessFilters
+class ProcessFilters extends AbstractController
 {
 
     private $security;
@@ -19,9 +20,11 @@ class ProcessFilters
         $this->security = $security;
     }
 
-    public function processFilters($filters, CampusRepository $campusRepository, StatusRepository $statusRepository, SubscriptionRepository $subscriptionRepository, $userSubs = [])
+    public function processFilters($filters, $userSubs = [])
     {
-        $campus = $campusRepository->findOneBy(['name' => $filters->getCampusName()]);
+        $campus = $this->getDoctrine()
+            ->getRepository(Campus::class)
+            ->findOneBy(['name' => $filters->getCampusName()]);
         $filters->setCampus($campus);
 
         if ($filters->getUserName()) {
@@ -30,13 +33,17 @@ class ProcessFilters
         }
 
         if ($filters->getPast()) {
-            $status = $statusRepository->findOneBy(['state' => 'Finished']);
+            $status = $this->getDoctrine()
+                ->getRepository(Status::class)
+                ->findOneBy(['state' => 'Finished']);
             $filters->setStatus($status);
         }
 
         if ($filters->getUserSub() || $filters->getUserNonsub()) {
             $userName = $this->security->getUser();
-            $userSubList = $subscriptionRepository->findBy(['user' => $userName]);
+            $userSubList = $this->getDoctrine()
+                ->getRepository(Subscription::class)
+                ->findBy(['user' => $userName]);
             foreach ($userSubList as $sub) {
                 $sub = $sub->getEvent()->getName();
                 $userSubs [] = $sub;
