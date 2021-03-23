@@ -6,6 +6,7 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
@@ -20,6 +21,7 @@ class Event
     private $id;
 
     /**
+     * @Groups("event")
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -50,6 +52,7 @@ class Event
     private $description;
 
     /**
+     * @Groups("event")
      * @ORM\ManyToOne(targetEntity=Location::class, inversedBy="events")
      */
     private $location;

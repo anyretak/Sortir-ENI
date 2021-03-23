@@ -2,6 +2,7 @@
     <img id="logo" src="{{ asset('images/logo.png') }}"  alt="Sortir ENI logo"/>
     {% if app.user %}
     <div class="navMenu">
+        <a class="nav" href="{{ path('map') }}">Map</a>
         {% if  is_granted('ROLE_ADMIN') %}
         <a class="nav" href="{{ path('admin_city') }}">Edit City</a>
         <a class="nav" href="{{ path('admin_campus') }}">Edit Campus</a>

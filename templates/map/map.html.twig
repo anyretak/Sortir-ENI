@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <div>
+        <label for="app-campus">Select campus:</label>
+        <select id="app-campus">
+            <option value=""></option>
+            {% for campus in campusList %}
+                <option value="{{ campus.name }}">{{ campus.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="mapid"></div>
+
+    {% block javascripts %}
+        {{ parent() }}
+        {{ encore_entry_script_tags('app_map') }}
+    {% endblock %}
+
+{% endblock %}

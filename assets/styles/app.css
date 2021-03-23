@@ -12,6 +12,10 @@
     }
 }
 
+#mapid {
+    height: 500px;
+}
+
 /* GENERAL & LAYOUT */
 body {
     background-color: #7DC2AF;
@@ -221,9 +225,9 @@ table.app-main {
     border-collapse: collapse;
     width: 100%;
     table-layout: auto;
-/*    display: block;
-    height: 300px;
-    overflow-y: scroll;*/
+    /*    display: block;
+        height: 300px;
+        overflow-y: scroll;*/
 }
 
 table.app-main td,
