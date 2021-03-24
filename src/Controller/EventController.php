@@ -9,7 +9,7 @@ use App\Repository\EventRepository;
 use App\Repository\LocationRepository;
 use App\Repository\StatusRepository;
 use App\Repository\UserRepository;
-use App\Service\ProcessCancelEvent;
+use App\Service\ProcessCancelEventInterface;
 use Mobile_Detect;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,28 +20,52 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class EventController extends AbstractController
 {
+    private CityRepository $cityRepository;
+    private CampusRepository $campusRepository;
+    private UserRepository $userRepository;
+    private StatusRepository $statusRepository;
+    private LocationRepository $locationRepository;
+    private EventRepository $eventRepository;
+    private SerializerInterface $serializer;
+    private ProcessCancelEventInterface $processCancelEvent;
+
+    public function __construct(CityRepository $cityRepository, EventRepository $eventRepository,
+                                CampusRepository $campusRepository, UserRepository $userRepository,
+                                StatusRepository $statusRepository, LocationRepository $locationRepository,
+                                ProcessCancelEventInterface $processCancelEvent, SerializerInterface $serializer)
+    {
+        $this->cityRepository = $cityRepository;
+        $this->campusRepository = $campusRepository;
+        $this->userRepository = $userRepository;
+        $this->statusRepository = $statusRepository;
+        $this->locationRepository = $locationRepository;
+        $this->eventRepository = $eventRepository;
+        $this->serializer = $serializer;
+        $this->processCancelEvent = $processCancelEvent;
+    }
+
     //****************************NEW EVENT*****************************//
     #[Route('/new_event', name: 'event')]
-    public function newEvent(Request $request, UserRepository $userRepository, StatusRepository $statusRepository, CityRepository $cityRepository, CampusRepository $campusRepository, LocationRepository $locationRepository): Response
+    public function newEvent(Request $request): Response
     {
         $user = $this->getUser();
-        $user = $userRepository->findOneBy(['username' => $user->getUsername()]);
+        $user = $this->userRepository->findOneBy(['username' => $user->getUsername()]);
         $userCampus = $user->getCampus();
-        $campus = $campusRepository->findAll();
-        $city = $cityRepository->findAll();
-        $location = $locationRepository->findAll();
+        $campus = $this->campusRepository->findAll();
+        $city = $this->cityRepository->findAll();
+        $location = $this->locationRepository->findAll();
 
         $form = $this->createForm(EventType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             if ($form->getClickedButton() === $form->get('create')) {
-                $state = $statusRepository->findOneBy(['state' => 'Created']);
+                $state = $this->statusRepository->findOneBy(['state' => 'Created']);
                 $flashMessage = 'Success! New event was created. Do you want to publish it now?';
             }
 
             if ($form->getClickedButton() === $form->get('publish')) {
-                $state = $statusRepository->findOneBy(['state' => 'Open']);
+                $state = $this->statusRepository->findOneBy(['state' => 'Open']);
                 $flashMessage = 'Success! New event was created and it is now open!';
             }
 
@@ -71,43 +95,43 @@ class EventController extends AbstractController
     }
 
     #[Route('/api/location', name: 'api_location')]
-    public function ajaxLocation(Request $request, LocationRepository $locationRepository, SerializerInterface $serializer): Response
+    public function ajaxLocation(Request $request): Response
     {
         $data = $request->toArray();
         $location = $data['locId'];
-        $location = $locationRepository->findOneBy(['name' => $location]);
-        $locationJson = $serializer->serialize($location, 'json', ['groups' => ['location']]);
+        $location = $this->locationRepository->findOneBy(['name' => $location]);
+        $locationJson = $this->serializer->serialize($location, 'json', ['groups' => ['location']]);
 
         return new JsonResponse($locationJson, Response::HTTP_OK, [], true);
     }
 
     #[Route('/api/city', name: 'api_city')]
-    public function ajaxCity(Request $request, CityRepository $cityRepository, SerializerInterface $serializer): Response
+    public function ajaxCity(Request $request): Response
     {
         $data = $request->toArray();
         $city = $data['cityId'];
-        $city = $cityRepository->findOneBy(['name' => $city]);
-        $cityJson = $serializer->serialize($city, 'json', ['groups' => ['city']]);
+        $city = $this->cityRepository->findOneBy(['name' => $city]);
+        $cityJson = $this->serializer->serialize($city, 'json', ['groups' => ['city']]);
 
         return new JsonResponse($cityJson, Response::HTTP_OK, [], true);
     }
 
     #[Route('/api/location_filter', name: 'api_location_filter')]
-    public function ajaxLocationFilter(Request $request, LocationRepository $locationRepository, CityRepository $cityRepository, SerializerInterface $serializer): Response
+    public function ajaxLocationFilter(Request $request): Response
     {
         $data = $request->toArray();
         $city = $data['cityId'];
-        $city = $cityRepository->findOneBy(['name' => $city]);
-        $location = $locationRepository->findBy(['city' => $city]);
-        $locationJson = $serializer->serialize($location, 'json', ['groups' => ['location']]);
+        $city = $this->cityRepository->findOneBy(['name' => $city]);
+        $location = $this->locationRepository->findBy(['city' => $city]);
+        $locationJson = $this->serializer->serialize($location, 'json', ['groups' => ['location']]);
         return new JsonResponse($locationJson, Response::HTTP_OK, [], true);
     }
 
     //*************************EVENT MANAGEMENT*************************//
     #[Route('/event_details/{event}', name: 'event_details')]
-    public function eventDetails($event, EventRepository $eventRepository, $userDetails = [])
+    public function eventDetails($event, $userDetails = [])
     {
-        $eventDetails = $eventRepository->findOneBy(['name' => $event]);
+        $eventDetails = $this->eventRepository->findOneBy(['name' => $event]);
         $locationDetails = $eventDetails->getLocation();
         $cityDetails = $locationDetails->getCity();
         $subscriptionDetails = $eventDetails->getSubscriptions();
@@ -134,9 +158,9 @@ class EventController extends AbstractController
     }
 
     #[Route('/edit_event/{event}', name: 'edit_event')]
-    public function editEvent($event, Request $request, EventRepository $eventRepository, StatusRepository $statusRepository): Response
+    public function editEvent($event, Request $request): Response
     {
-        $event = $eventRepository->findOneBy(['name' => $event]);
+        $event = $this->eventRepository->findOneBy(['name' => $event]);
         $location = $event->getLocation();
         $city = $location->getCity();
 
@@ -145,12 +169,12 @@ class EventController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             if ($form->getClickedButton() === $form->get('create')) {
-                $state = $statusRepository->findOneBy(['state' => 'Created']);
+                $state = $this->statusRepository->findOneBy(['state' => 'Created']);
                 $flashMessage = 'Success! Event was modified. Do you want to publish it now?';
             }
 
             if ($form->getClickedButton() === $form->get('publish')) {
-                $state = $statusRepository->findOneBy(['state' => 'Open']);
+                $state = $this->statusRepository->findOneBy(['state' => 'Open']);
                 $flashMessage = 'Success! Your event was published and it is now open!';
             }
 
@@ -177,9 +201,9 @@ class EventController extends AbstractController
 
     //**************************CANCEL EVENT****************************//
     #[Route('/cancel_event/{event}', name: 'cancel_event')]
-    public function cancelEvent($event, EventRepository $eventRepository): Response
+    public function cancelEvent($event): Response
     {
-        $event = $eventRepository->findOneBy(['name' => $event]);
+        $event = $this->eventRepository->findOneBy(['name' => $event]);
         $location = $event->getLocation();
         $city = $location->getCity();
         return $this->render('event/cancel_event.html.twig', [
@@ -190,10 +214,10 @@ class EventController extends AbstractController
     }
 
     #[Route('/api/cancel_event', name: 'api_cancel_event')]
-    public function ajaxCancelEvent(Request $request, ProcessCancelEvent $processCancelEvent): Response
+    public function ajaxCancelEvent(Request $request): Response
     {
         $data = $request->toArray();
-        $processCancelEvent->cancelEvent($data);
+        $this->processCancelEvent->cancelEvent($data);
         return new Response();
     }
 }

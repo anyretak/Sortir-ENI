@@ -7,8 +7,8 @@ use App\Form\RegistrationFormType;
 use App\Repository\CampusRepository;
 use App\Repository\CityRepository;
 use App\Repository\UserRepository;
-use App\Service\ProcessAdmin;
-use App\Service\ProcessCSV;
+use App\Service\ProcessAdminInterface;
+use App\Service\ProcessCSVInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,55 +17,75 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AdminController extends AbstractController
 {
+
+    private ProcessAdminInterface $processAdmin;
+    private CityRepository $cityRepository;
+    private CampusRepository $campusRepository;
+    private UserRepository $userRepository;
+    private UserPasswordEncoderInterface $passwordEncoder;
+    private ProcessCSVInterface $processCSV;
+
+    public function __construct(ProcessAdminInterface $processAdmin, CityRepository $cityRepository,
+                                CampusRepository $campusRepository, UserRepository $userRepository,
+                                UserPasswordEncoderInterface $passwordEncoder, ProcessCSVInterface $processCSV)
+    {
+        $this->processAdmin = $processAdmin;
+        $this->cityRepository = $cityRepository;
+        $this->campusRepository = $campusRepository;
+        $this->userRepository = $userRepository;
+        $this->passwordEncoder = $passwordEncoder;
+        $this->processCSV = $processCSV;
+    }
+
     //**************************MANAGE CITY*****************************//
     #[Route('/admin/admin_city', name: 'admin_city')]
-    public function editCity(CityRepository $cityRepository): Response
+    public function editCity(): Response
     {
-        $cityList = $cityRepository->findAll();
+        $cityList = $this->cityRepository->findAll();
         return $this->render('admin/admin_city.html.twig', [
             'cityList' => $cityList,
         ]);
     }
 
     #[Route('/admin/add_city', name: 'add_city')]
-    public function addCity(Request $request, ProcessAdmin $processAdmin): Response
+    public function addCity(Request $request): Response
     {
         $data = $request->toArray();
-        $processAdmin->addCity($data);
+        $this->processAdmin->addCity($data);
         return new Response();
     }
 
     #[Route('/admin/delete_city', name: 'delete_city')]
-    public function removeCity(Request $request, ProcessAdmin $processAdmin): Response
+    public function removeCity(Request $request): Response
     {
         $data = $request->toArray();
-        $processAdmin->removeCity($data);
+        $this->processAdmin->removeCity($data);
         return new Response();
     }
 
     //**************************MANAGE CAMPUS***************************//
     #[Route('/admin/admin_campus', name: 'admin_campus')]
-    public function editCampus(CampusRepository $campusRepository): Response
+    public function editCampus(): Response
     {
-        $campusList = $campusRepository->findAll();
+        $campusList = $this->campusRepository->findAll();
         return $this->render('admin/admin_campus.html.twig', [
             'campusList' => $campusList,
         ]);
     }
 
     #[Route('/admin/add_campus', name: 'add_campus')]
-    public function addCampus(Request $request, ProcessAdmin $processAdmin): Response
+    public function addCampus(Request $request): Response
     {
         $data = $request->toArray();
-        $processAdmin->addCampus($data);
+        $this->processAdmin->addCampus($data);
         return new Response();
     }
 
     #[Route('/admin/delete_campus', name: 'delete_campus')]
-    public function removeCampus(Request $request, ProcessAdmin $processAdmin): Response
+    public function removeCampus(Request $request): Response
     {
         $data = $request->toArray();
-        $processAdmin->removeCampus($data);
+        $this->processAdmin->removeCampus($data);
         return new Response();
     }
 
@@ -77,35 +97,35 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/user_manage', name: 'user_manage')]
-    public function userManage(UserRepository $userRepository): Response
+    public function userManage(): Response
     {
-        $userList = $userRepository->findAll();
+        $userList = $this->userRepository->findAll();
         return $this->render('admin/user_manage.html.twig', [
             'userList' => $userList,
         ]);
     }
 
     #[Route('/admin/user_suspend', name: 'user_suspend')]
-    public function userSuspend(Request $request, ProcessAdmin $processAdmin, UserRepository $userRepository): Response
+    public function userSuspend(Request $request): Response
     {
         $data = $request->toArray();
-        $userList = $processAdmin->suspendUser($data, $userRepository);
+        $userList = $this->processAdmin->suspendUser($data, $this->userRepository);
         return new Response($this->renderView('templates/_user_table.html.twig', [
             'userList' => $userList,
         ]));
     }
 
     #[Route('/admin/user_delete', name: 'user_delete')]
-    public function userDelete(Request $request, ProcessAdmin $processAdmin): Response
+    public function userDelete(Request $request): Response
     {
         $data = $request->toArray();
-        $processAdmin->deleteUser($data);
+        $this->processAdmin->deleteUser($data);
         return new Response();
     }
 
     //***************************ADD NEW USERS**************************//
     #[Route('/admin/user_register', name: 'app_register')]
-    public function userRegister(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function userRegister(Request $request): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -113,7 +133,7 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setPassword(
-                $passwordEncoder->encodePassword(
+                $this->passwordEncoder->encodePassword(
                     $user,
                     $form->get('password')->getData()
                 )
@@ -140,10 +160,10 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/csv_upload', name: 'csv_upload')]
-    public function testCSV(Request $request, ProcessCSV $processCSV, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function testCSV(Request $request): Response
     {
         $data = $request->files->get('csv');
-        $processCSV->processCSV($data, $passwordEncoder);
+        $this->processCSV->processCSV($data, $this->passwordEncoder);
         $this->addFlash(
             'notice',
             'User group was successfully registered!',

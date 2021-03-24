@@ -6,26 +6,33 @@ use App\Entity\Campus;
 use App\Entity\City;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 
-class ProcessAdmin extends AbstractController
+class ProcessAdmin implements ProcessAdminInterface
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function addCity($data)
     {
         $newCity = new City();
         $newCity->setName($data['city']);
         $newCity->setCode($data['code']);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->persist($newCity);
         $entityManager->flush();
     }
 
     public function removeCity($data)
     {
-        $city = $this->getDoctrine()
+        $city = $this->entityManager
             ->getRepository(City::class)
             ->findOneBy(['name' => $data['city']]);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->remove($city);
         $entityManager->flush();
     }
@@ -34,17 +41,17 @@ class ProcessAdmin extends AbstractController
     {
         $newCampus = new Campus();
         $newCampus->setName($data['campus']);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->persist($newCampus);
         $entityManager->flush();
     }
 
     public function removeCampus($data)
     {
-        $campus = $this->getDoctrine()
+        $campus = $this->entityManager
             ->getRepository(Campus::class)
             ->findOneBy(['name' => $data['campus']]);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->remove($campus);
         $entityManager->flush();
     }
@@ -58,7 +65,7 @@ class ProcessAdmin extends AbstractController
         } else {
             $user->setIsActive(false);
         }
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->persist($user);
         $entityManager->flush();
         return $userRepository->findAll();
@@ -66,10 +73,10 @@ class ProcessAdmin extends AbstractController
 
     public function deleteUser($data)
     {
-        $user = $this->getDoctrine()
+        $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['name' => $data['user']]);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->remove($user);
         $entityManager->flush();
     }

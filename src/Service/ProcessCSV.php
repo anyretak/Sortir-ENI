@@ -4,13 +4,20 @@ namespace App\Service;
 
 use App\Entity\Campus;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
 use SplFileObject;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class ProcessCSV extends AbstractController
+class ProcessCSV implements ProcessCSVInterface
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function processCSV($data, UserPasswordEncoderInterface $passwordEncoder)
     {
         $csv = Reader::createFromFileObject(new SplFileObject($data));
@@ -18,7 +25,7 @@ class ProcessCSV extends AbstractController
         $records = $csv->getRecords();
         foreach ($records as $offset => $record) {
             $user = new User();
-            $campus = $this->getDoctrine()
+            $campus = $this->entityManager
                 ->getRepository(Campus::class)
                 ->findOneBy(['name' => $record ['campus']]);
             $user->setCampus($campus);
@@ -33,7 +40,7 @@ class ProcessCSV extends AbstractController
                     $record ['password']
                 )
             );
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($user);
             $entityManager->flush();
         }

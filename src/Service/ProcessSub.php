@@ -6,22 +6,29 @@ use App\Entity\Event;
 use App\Entity\Subscription;
 use App\Entity\User;
 use DateTime;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 
-class ProcessSub extends AbstractController
+class ProcessSub implements ProcessSubInterface
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function processSub($data)
     {
-        $user = $this->getDoctrine()
+        $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['name' => $data['user']]);
-        $event = $this->getDoctrine()
+        $event = $this->entityManager
             ->getRepository(Event::class)
             ->findOneBy(['name' => $data['event']]);
-        $subscription = $this->getDoctrine()
+        $subscription = $this->entityManager
             ->getRepository(Subscription::class)
             ->findOneBy(['user' => $user, 'event' => $event]);
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         if (is_null($subscription)) {
             $subscription = new Subscription();
             $date = new DateTime();

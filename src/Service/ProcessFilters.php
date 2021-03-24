@@ -7,22 +7,24 @@ use App\Entity\Status;
 use App\Entity\Subscription;
 use DateInterval;
 use DateTime;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
-class ProcessFilters extends AbstractController
+class ProcessFilters implements ProcessFiltersInterface
 {
 
-    private $security;
+    private Security $security;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, EntityManagerInterface $entityManager)
     {
         $this->security = $security;
+        $this->entityManager = $entityManager;
     }
 
     public function processFilters($filters, $userSubs = [])
     {
-        $campus = $this->getDoctrine()
+        $campus = $this->entityManager
             ->getRepository(Campus::class)
             ->findOneBy(['name' => $filters->getCampusName()]);
         $filters->setCampus($campus);
@@ -33,7 +35,7 @@ class ProcessFilters extends AbstractController
         }
 
         if ($filters->getPast()) {
-            $status = $this->getDoctrine()
+            $status = $this->entityManager
                 ->getRepository(Status::class)
                 ->findOneBy(['state' => 'Finished']);
             $filters->setStatus($status);
@@ -41,7 +43,7 @@ class ProcessFilters extends AbstractController
 
         if ($filters->getUserSub() || $filters->getUserNonsub()) {
             $userName = $this->security->getUser();
-            $userSubList = $this->getDoctrine()
+            $userSubList = $this->entityManager
                 ->getRepository(Subscription::class)
                 ->findBy(['user' => $userName]);
             foreach ($userSubList as $sub) {

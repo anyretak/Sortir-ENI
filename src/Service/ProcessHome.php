@@ -3,19 +3,21 @@
 namespace App\Service;
 
 use App\Repository\EventRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
-class ProcessHome extends AbstractController
+class ProcessHome implements ProcessHomeInterface
 {
-    private $security;
+    private Security $security;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, EntityManagerInterface $entityManager)
     {
         $this->security = $security;
+        $this->entityManager = $entityManager;
     }
 
-    public function processMobileHome(ProcessFilters $processFilters, EventRepository $eventRepository)
+    public function processMobileHome(ProcessFiltersInterface $processFilters, EventRepository $eventRepository)
     {
         $date = $processFilters->archiveDate();
         /** @var \App\Entity\User $user */
@@ -24,7 +26,7 @@ class ProcessHome extends AbstractController
         return $eventRepository->filterMobile($date, $campus);
     }
 
-    public function processHome(ProcessFilters $processFilters, EventRepository $eventRepository)
+    public function processHome(ProcessFiltersInterface $processFilters, EventRepository $eventRepository)
     {
         $date = $processFilters->archiveDate();
         return $eventRepository->filterArchive($date);

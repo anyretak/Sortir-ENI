@@ -6,10 +6,20 @@ use App\Entity\Event;
 use App\Entity\Status;
 use DateInterval;
 use DateTime;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 
-class BatchStatus extends AbstractController
+class BatchStatus
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $entityManager;
+
+    public function __construct (EntityManagerInterface $entityManager) {
+
+        $this->entityManager = $entityManager;
+    }
+
     public function batchStatus($eventList = [])
     {
         $date = new DateTime();
@@ -17,19 +27,19 @@ class BatchStatus extends AbstractController
         $dateNow = clone $date;
         $date->sub(new DateInterval('P1M'));
 
-        $stateClosed = $this->getDoctrine()
+        $stateClosed = $this->entityManager
             ->getRepository(Status::class)
             ->findOneBy(['state' => 'Closed']);
-        $stateFinished = $this->getDoctrine()
+        $stateFinished = $this->entityManager
             ->getRepository(Status::class)
             ->findOneBy(['state' => 'Finished']);
-        $stateActive = $this->getDoctrine()
+        $stateActive = $this->entityManager
             ->getRepository(Status::class)
             ->findOneBy(['state' => 'Active']);
-        $listEvents = $this->getDoctrine()
+        $listEvents = $this->entityManager
             ->getRepository(Event::class)
             ->filterArchive($date);
-        $entityManager = $this->getDoctrine()->getManager();
+        /*$entityManager = $this->entityManager;*/
 
         foreach ($listEvents as $event) {
             $eventStatus = $event->getStatus()->getState();
@@ -52,9 +62,9 @@ class BatchStatus extends AbstractController
                 }
             }
             $eventList[] = $event;
-            $entityManager->persist($event);
+            $this->entityManager->persist($event);
         }
         //AVOIDS flush every time in the loop
-        $entityManager->flush();
+        $this->entityManager->flush();
     }
 }

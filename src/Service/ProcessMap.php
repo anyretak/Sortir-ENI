@@ -4,17 +4,24 @@ namespace App\Service;
 
 use App\Entity\Campus;
 use App\Entity\Event;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 
-class ProcessMap extends AbstractController
+class ProcessMap implements ProcessMapInterface
 {
-    public function processMap ($data, ProcessFilters $processFilters) {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function processMap ($data, ProcessFiltersInterface $processFilters) {
         $eventCoords = [];
         $date = $processFilters->archiveDate();
-        $campus = $this->getDoctrine()
+        $campus = $this->entityManager
             ->getRepository(Campus::class)
             -> findOneBy(['name' => $data['campus']]);
-        $events = $this->getDoctrine()
+        $events = $this->entityManager
             ->getRepository(Event::class)
             ->filterMobile($date, $campus);
 
