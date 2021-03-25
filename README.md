@@ -9,8 +9,8 @@ Symfony 5.2 / PHP 8.0
 -Users can upload photos for their profile (the link to the photos is stored in the database).</br>
 -Users can request to reset their email, in which case a password reset token is created and a link is sent to their registered email address that is only valid for 24 hours.</br>
 
-## Website functionality - Event management:</br>
--Users can view details of all events up to 30 days before.</br>
+## Website functionality - Event management:<br>
+-Users can view details of all events up to 30 days before.<br>
 -Events can be dynamically filtered based on campus/location name/dates/subscriptions and other criteria.<br>
 -Event status is updated based on multiple factors: created/open(allows subscriptions)/closed(subscription date passed)/active(event ongoing)finished(event date passed)/cancelled(user cancelled their event) through a batch command.<br>
 -Users can create new events.</br>
@@ -62,3 +62,6 @@ symfony console make:reset-password<br>
 //WEBPACK<br>
 composer require symfony/webpack-encore-bundle<br>
 yarn install<br>
+
+//DB<br>
+Database export is available as sortir_eni.sql <br>
